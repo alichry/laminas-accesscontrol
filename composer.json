@@ -1,0 +1,26 @@
+{
+    "name": "alichry/laminas-accesscontrol",
+    "description": "Access control for laminas",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ali Cherry",
+            "email": "cmcrc@alicherry.net"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "AliChry\\Laminas\\AccessControl\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AliChry\\Laminas\\AccessControlTest\\": "test/"
+        }
+    }
+}
