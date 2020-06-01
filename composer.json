@@ -12,7 +12,9 @@
             "email": "cmcrc@alicherry.net"
         }
     ],
-    "require": {},
+    "require": {
+        "laminas/laminas-servicemanager": "^3.4"
+    },
     "autoload": {
         "psr-4": {
             "AliChry\\Laminas\\AccessControl\\": "src/"
