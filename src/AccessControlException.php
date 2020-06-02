@@ -42,4 +42,5 @@ class AccessControlException extends \Exception
     const ACL_ACTION_NOT_DEFINED = 10;
     const ACL_ACTION_NULL = 11;
     const ACL_DUPLICATE_ACTION = 12;
+    const ACS_INVALID_CODE = 13;
 }

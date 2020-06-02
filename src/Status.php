@@ -58,6 +58,12 @@ class Status
      */
     const OK = 1;
 
+    /*
+     * for checkStatus
+     */
+    const CODE_MIN = self::UNAUTHORIZED;
+    const CODE_MAX = self::OK;
+
     /**
      * @var int
      */
@@ -78,9 +84,19 @@ class Status
      * @param $code
      * @param mixed $identity
      * @param array $messages
+     * @throws AccessControlException if passed code is baddie
      */
     public function __construct($code, $identity, array $messages = [])
     {
+        if (!$this->checkCode($code)) {
+            throw new AccessControlException(
+                sprintf(
+                    'Invalid status code: %s',
+                    print_r($code, true)
+                ),
+                AccessControlException::ACS_INVALID_CODE
+            );
+        }
         $this->code = (int) $code;
         $this->identity = $identity;
         $this->message = $messages;
@@ -108,5 +124,14 @@ class Status
     public function getMessages(): array
     {
         return $this->message;
+    }
+
+    /**
+     * @param int $code
+     * @return bool
+     */
+    private function checkCode($code): bool
+    {
+        return $code >= self::CODE_MIN && $code <= self::CODE_MAX;
     }
 }
