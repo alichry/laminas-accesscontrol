@@ -27,83 +27,107 @@
 
 namespace AliChry\Laminas\AccessControlTest;
 
+use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Status;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
-    private $codes = [
-        Status::UNAUTHORIZED,
-        Status::REJECTED,
-        Status::PUBLIC,
-        Status::OK
-    ];
-
-    private $identities = [
-        null,
-        'test',
-        [
-            'identity' => 'test',
-            'email' => null
-        ]
-    ];
-
-    private $messages = [
-        [],
-        [
-            'first message',
-            'last message'
-        ]
-    ];
-
-    public function testCode()
+    public function dataProvider()
     {
-        foreach ($this->codes as $code) {
-            $status = new Status($code, null);
-            $this->assertEquals(
-                $code,
-                $status->getCode()
-            );
-        }
-    }
+        $codes = [
+            null,
+            STATUS::CODE_MIN - 1,
+            STATUS::CODE_MAX + 1,
+            Status::UNAUTHORIZED,
+            Status::REJECTED,
+            Status::PUBLIC,
+            Status::OK
+        ];
 
-    public function testIdentity()
-    {
-        foreach ($this->codes as $code) {
-            foreach ($this->identities as $identity) {
-                $status = new Status($code, $identity);
-                $this->assertEquals(
-                    $code,
-                    $status->getCode()
-                );
-                $this->assertEquals(
-                    $identity,
-                    $status->getIdentity()
-                );
-            }
-        }
-    }
+        $identities = [
+            null,
+            'test',
+            [
+                'identity' => 'test',
+                'email' => null
+            ]
+        ];
 
-    public function testMessages()
-    {
-        foreach ($this->codes as $code) {
-            foreach ($this->identities as $identity) {
-                foreach ($this->messages as $messages) {
-                    $status = new Status($code, $identity, $messages);
-                    $this->assertEquals(
+        $someMessages = [
+            [],
+            [
+                'first message',
+                'last message'
+            ]
+        ];
+
+        // enumerate all permutations of all possible codes
+        // with some other sample values
+        $data = [];
+        foreach ($codes as $code) {
+            foreach ($identities as $identity) {
+                foreach ($someMessages as $messages) {
+                    $datum = [
                         $code,
-                        $status->getCode()
-                    );
-                    $this->assertEquals(
                         $identity,
-                        $status->getIdentity()
-                    );
-                    $this->assertEquals(
-                        $messages,
-                        $status->getMessages()
-                    );
+                        $messages
+                    ];
+                    if (
+                        null === $code
+                        || (
+                            Status::UNAUTHORIZED !== $code
+                            && Status::REJECTED !== $code
+                            && Status::PUBLIC !== $code
+                            && Status::OK !== $code
+                        )
+                    ) {
+                        $datum[] = [
+                            'exception' => AccessControlException::class,
+                            'code' => AccessControlException::ACS_INVALID_CODE
+                        ];
+                    }
+                    $data[] = $datum;
                 }
             }
         }
+        return $data;
+    }
+
+    /**
+     * @dataProvider dataProvider
+     * @param $code
+     * @param $identity
+     * @param $messages
+     * @param array|null $exception
+     * @throws AccessControlException
+     */
+    public function testAll(
+        $code,
+        $identity,
+        $messages,
+        array $exception = null
+    )
+    {
+        if ($exception !== null) {
+            $this->expectException($exception['exception']);
+            $this->expectExceptionCode($exception['code']);
+        }
+        $status = new Status($code, $identity, $messages);
+        if ($exception !== null) {
+            return;
+        }
+        $this->assertEquals(
+            $code,
+            $status->getCode()
+        );
+        $this->assertEquals(
+            $identity,
+            $status->getIdentity()
+        );
+        $this->assertEquals(
+            $messages,
+            $status->getMessages()
+        );
     }
 }
