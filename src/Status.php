@@ -132,6 +132,9 @@ class Status
      */
     private function checkCode($code): bool
     {
+        if (null === $code || ! is_int($code)) {
+            return false;
+        }
         return $code >= self::CODE_MIN && $code <= self::CODE_MAX;
     }
 }
