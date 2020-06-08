@@ -25,7 +25,7 @@
  * Time: 11:44
  */
 
-namespace AliChry\Laminas\AccessControlTest;
+namespace AliChry\Laminas\AccessControl\Test;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Status;

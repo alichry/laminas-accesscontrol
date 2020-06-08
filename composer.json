@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AliChry\\Laminas\\AccessControlTest\\": "test/"
+            "AliChry\\Laminas\\AccessControl\\Test\\": "test/"
         }
     }
 }
