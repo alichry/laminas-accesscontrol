@@ -129,17 +129,20 @@ class AccessControlList implements ListAdapterInterface
         int $mode,
         int $policy,
         array $controllers,
-        array $identities = [],
-        array $roles = [],
-        array $permissions = []
+        array $identities = null,
+        array $roles = null,
+        array $permissions = null
     )
     {
+        $identities = $identities ?? [];
+        $roles = $roles ?? [];
+        $permissions = $permissions ?? [];
         $this->setMode($mode);
         $this->setPolicy($policy);
-        $this->controllers = $controllers;
-        $this->identities = $identities;
-        $this->roles = $roles;
-        $this->permissions = $permissions;
+        $this->setControllers($controllers);
+        $this->setIdentities($identities);
+        $this->setRoles($roles);
+        $this->setPermissions($permissions);
     }
 
     /**
@@ -202,11 +205,27 @@ class AccessControlList implements ListAdapterInterface
     }
 
     /**
+     * @param array $controllers
+     */
+    private function setControllers(array $controllers)
+    {
+        $this->controllers = $controllers;
+    }
+
+    /**
      * @return array
      */
     public function getIdentities(): array
     {
         return $this->identities;
+    }
+
+    /**
+     * @param array $identities
+     */
+    private function setIdentities(array $identities)
+    {
+        $this->identities = $identities;
     }
 
     /**
@@ -218,11 +237,27 @@ class AccessControlList implements ListAdapterInterface
     }
 
     /**
+     * @param $roles
+     */
+    private function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+    }
+
+    /**
      * @return null|array
      */
     public function getPermissions(): ?array
     {
         return $this->permissions;
+    }
+
+    /**
+     * @param array $permissions
+     */
+    private function setPermissions(array $permissions)
+    {
+        $this->permissions = $permissions;
     }
 
     /**
