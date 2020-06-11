@@ -22,14 +22,35 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Policy;
 
-interface ResourceManagerInterface
+use AliChry\Laminas\AccessControl\Resource\PermissionInterface;
+
+interface PolicyInterface
 {
     /**
-     * @param $controller
-     * @param null $action
-     * @return ResourceInterface
+     * @return bool
      */
-    public function getResource($controller, $action = null);
+    public function isPublic(): bool;
+
+    /**
+     * @return bool
+     */
+    public function deniesAll(): bool;
+
+    /**
+     * @return bool
+     */
+    public function requiresAuthentication(): bool;
+
+    /**
+     * @return bool
+     */
+    public function requiresAuthorization(): bool;
+
+    /**
+     * @throws AccessControlException if the policy does not require a permission
+     * @return PermissionInterface
+     */
+    /*public function getPermission();*/
 }

@@ -27,7 +27,7 @@
 
 namespace AliChry\Laminas\AccessControl;
 
-class AccessControlList implements ListAdapterInterface
+class ArrayAccessControlList implements AccessControlListInterface
 {
     const MODE_STRICT = 0;
     const MODE_CHILL = 1;
@@ -116,7 +116,7 @@ class AccessControlList implements ListAdapterInterface
     private $permissions;
 
     /**
-     * AccessControlList constructor.
+     * ArrayAccessControlList constructor.
      * @param int $mode
      * @param int $policy
      * @param array $controllers
@@ -372,7 +372,7 @@ class AccessControlList implements ListAdapterInterface
         $found = \in_array($roleName, $identityRoles, true);
         if (
             $found === true
-            && $this->mode === AccessControlList::MODE_STRICT
+            && $this->mode === self::MODE_STRICT
             && ! $this->checkRole($roleName)
         ) {
             throw new AccessControlException(

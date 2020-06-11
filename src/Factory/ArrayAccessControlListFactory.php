@@ -28,7 +28,7 @@
 namespace AliChry\Laminas\AccessControl\Factory;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
-use AliChry\Laminas\AccessControl\AccessControlList;
+use AliChry\Laminas\AccessControl\ArrayAccessControlList;
 use AliChry\Laminas\AccessControl\AccessControlListInterface;
 use AliChry\Laminas\AccessControl\AuthorizationService;
 use Interop\Container\ContainerInterface;
@@ -38,7 +38,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
-class AccessControlListFactory implements FactoryInterface
+class ArrayAccessControlListFactory implements FactoryInterface
 {
     const OPTION_MODE = 'mode';
     const OPTION_POLICY = 'policy';
@@ -98,7 +98,7 @@ class AccessControlListFactory implements FactoryInterface
             );
         }
         try {
-            return new AccessControlList(
+            return new ArrayAccessControlList(
                 $mode,
                 $policy,
                 $controllersList,
@@ -109,7 +109,7 @@ class AccessControlListFactory implements FactoryInterface
         } catch (AccessControlException $e) {
             throw new ServiceNotCreatedException(
                 sprintf(
-                    'Unable to create AccessControlList, exception thrown '
+                    'Unable to create ArrayAccessControlList, exception thrown '
                     . 'with message: %s',
                     $e->getMessage()
                 ),

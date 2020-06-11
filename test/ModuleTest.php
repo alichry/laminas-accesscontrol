@@ -62,12 +62,12 @@ class ModuleTest extends TestCase
             is_array($factoriesConfig),
             'factories key is not an array in config'
         );
-        $aclFactory = $factoriesConfig[AccessControlList::class] ?? null;
+        $aclFactory = $factoriesConfig[ArrayAccessControlList::class] ?? null;
         $this->assertTrue(
             isset($aclFactory),
             sprintf(
                 '%s service is not set in factories config',
-                AccessControlList::class
+                ArrayAccessControlList::class
             )
         );
         $this->assertTrue(

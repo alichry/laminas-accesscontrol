@@ -22,33 +22,15 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Resource;
 
-interface PolicyInterface
+use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
+
+interface PermissionInterface
 {
     /**
+     * @param IdentityInterface $identity
      * @return bool
      */
-    public function isPublic(): bool;
-
-    /**
-     * @return bool
-     */
-    public function deniesAll(): bool;
-
-    /**
-     * @return bool
-     */
-    public function requiresAuthentication(): bool;
-
-    /**
-     * @return bool
-     */
-    public function requiresAuthorization(): bool;
-
-    /**
-     * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
-     */
-    /*public function getPermission();*/
+    /*public function identityHasPermission($identity);*/
 }

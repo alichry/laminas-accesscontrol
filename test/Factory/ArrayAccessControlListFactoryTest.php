@@ -28,14 +28,14 @@
 namespace AliChry\Laminas\AccessControl\Test\Factory;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
-use AliChry\Laminas\AccessControl\AccessControlList;
+use AliChry\Laminas\AccessControl\ArrayAccessControlList;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use PHPUnit\Framework\TestCase;
-use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory as Factory;
+use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory as Factory;
 
-class AccessControlListFactoryTest extends TestCase
+class ArrayAccessControlListFactoryTest extends TestCase
 {
     private $mockContainer;
     private $requestedName;
@@ -60,8 +60,8 @@ class AccessControlListFactoryTest extends TestCase
         ];
         // some valid values if a field is in
         $someValidValues = [
-            Factory::OPTION_MODE => AccessControlList::MODE_STRICT,
-            Factory::OPTION_POLICY => AccessControlList::POLICY_REJECT,
+            Factory::OPTION_MODE => ArrayAccessControlList::MODE_STRICT,
+            Factory::OPTION_POLICY => ArrayAccessControlList::POLICY_REJECT,
             Factory::OPTION_CONTROLLERS_LIST => [],
             Factory::OPTION_IDENTITIES_LIST => [],
             Factory::OPTION_ROLES_LIST => [],
@@ -132,7 +132,7 @@ class AccessControlListFactoryTest extends TestCase
         if (! $notIn) { // in
             $this->assertEquals(
                 $result,
-                new AccessControlList(
+                new ArrayAccessControlList(
                     ... array_values($options)
                 )
             );

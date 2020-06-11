@@ -29,13 +29,13 @@ namespace AliChry\Laminas\AccessControl\Test;
 use PHPUnit\Framework\TestCase;
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Status;
-use AliChry\Laminas\AccessControl\AccessControlList;
+use AliChry\Laminas\AccessControl\ArrayAccessControlList;
 
 // TODO: For methods that are not mode/policy dependent,
 //       maybe create an enumerator that will generate ACL objects
 //       for all possible permutations.
 
-final class AccessControlListTest extends TestCase
+final class ArrayAccessControlListTest extends TestCase
 {
     private $identities = [
         'user1' => [
@@ -73,10 +73,10 @@ final class AccessControlListTest extends TestCase
         'bad-identity' => 1
     ];
     private $controllers = [
-        'PublicController' => AccessControlList::ACCESS_ALL,
-        'ClosedController' => AccessControlList::ACCESS_REJECT_ALL,
+        'PublicController' => ArrayAccessControlList::ACCESS_ALL,
+        'ClosedController' => ArrayAccessControlList::ACCESS_REJECT_ALL,
         'AuthRequiredController' =>
-            AccessControlList::ACCESS_AUTHENTICATED_ONLY,
+            ArrayAccessControlList::ACCESS_AUTHENTICATED_ONLY,
         'AdminController' => 'role:admin',
         'UserController' => 'role:user',
         'Edit1Controller' => 'perm:edit1',
@@ -84,9 +84,9 @@ final class AccessControlListTest extends TestCase
         'SpecialAdminController' => 'perm:special-admin-perm',
         'SpecialUserController' => 'perm:special-user-perm',
         'MultiplePermissionsController' => [
-            'allAction' => AccessControlList::ACCESS_ALL,
-            'closedAction' => AccessControlList::ACCESS_REJECT_ALL,
-            'authedAction' => AccessControlList::ACCESS_AUTHENTICATED_ONLY,
+            'allAction' => ArrayAccessControlList::ACCESS_ALL,
+            'closedAction' => ArrayAccessControlList::ACCESS_REJECT_ALL,
+            'authedAction' => ArrayAccessControlList::ACCESS_AUTHENTICATED_ONLY,
             'view1Action' => 'perm:view1',
             'edit1Action' => 'perm:edit1',
             'userRoleAction' => 'role:user',
@@ -128,14 +128,14 @@ final class AccessControlListTest extends TestCase
 
     public function testMode()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
-        $this->assertEquals(AccessControlList::MODE_STRICT, $acl->getMode());
-        $acl->setMode(AccessControlList::MODE_CHILL);
-        $this->assertEquals(AccessControlList::MODE_CHILL, $acl->getMode());
+        $this->assertEquals(ArrayAccessControlList::MODE_STRICT, $acl->getMode());
+        $acl->setMode(ArrayAccessControlList::MODE_CHILL);
+        $this->assertEquals(ArrayAccessControlList::MODE_CHILL, $acl->getMode());
         $this->expectException(AccessControlException::class);
         $this->expectExceptionCode(AccessControlException::ACL_INVALID_MODE);
         $acl->setMode(2);
@@ -143,14 +143,14 @@ final class AccessControlListTest extends TestCase
 
     public function testPolicy()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
-        $this->assertEquals(AccessControlList::POLICY_REJECT, $acl->getPolicy());
-        $acl->setPolicy(AccessControlList::POLICY_ACCEPT);
-        $this->assertEquals(AccessControlList::POLICY_ACCEPT, $acl->getPolicy());
+        $this->assertEquals(ArrayAccessControlList::POLICY_REJECT, $acl->getPolicy());
+        $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
+        $this->assertEquals(ArrayAccessControlList::POLICY_ACCEPT, $acl->getPolicy());
         $this->expectException(AccessControlException::class);
         $this->expectExceptionCode(AccessControlException::ACL_INVALID_POLICY);
         $acl->setPolicy(3);
@@ -158,15 +158,15 @@ final class AccessControlListTest extends TestCase
 
     public function testControllers()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals([], $acl->getControllers());
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->assertEquals($this->controllers, $acl->getControllers());
@@ -174,15 +174,15 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentities()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals([], $acl->getIdentities());
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -191,15 +191,15 @@ final class AccessControlListTest extends TestCase
 
     public function testRoles()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals([], $acl->getRoles());
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles
@@ -209,15 +209,15 @@ final class AccessControlListTest extends TestCase
 
     public function testPermissions()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals([], $acl->getPermissions());
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             [],
@@ -228,9 +228,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetRolePermissionsWithUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -240,9 +240,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetRolePermissionsWithBadRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles
@@ -254,9 +254,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetRolePermissions()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles
@@ -273,9 +273,9 @@ final class AccessControlListTest extends TestCase
 
     public function testRoleHasPermissionWithUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -286,9 +286,9 @@ final class AccessControlListTest extends TestCase
 
     public function testRoleHasPermissionWithBadRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles,
@@ -301,9 +301,9 @@ final class AccessControlListTest extends TestCase
 
     public function testRoleHasPermissionWithStrictModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles
@@ -317,9 +317,9 @@ final class AccessControlListTest extends TestCase
 
     public function testRoleHasPermissionWithChillModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles
@@ -332,9 +332,9 @@ final class AccessControlListTest extends TestCase
 
     public function testRoleHasPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             [],
             $this->roles,
@@ -356,9 +356,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -370,9 +370,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
@@ -383,9 +383,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -401,9 +401,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -423,9 +423,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityRolesWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -437,9 +437,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityRolesWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
@@ -450,9 +450,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityRolesWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -468,9 +468,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityRoles()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -490,9 +490,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityPermissionsWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -504,9 +504,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityPermissionsWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
@@ -518,9 +518,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityPermissionsWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -536,9 +536,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetIdentityPermissions()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles,
@@ -566,9 +566,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             [],
@@ -583,9 +583,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
@@ -596,9 +596,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             [],
@@ -613,9 +613,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithStrictModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -628,9 +628,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithStrictModeAndUnlistedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles,
@@ -645,9 +645,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermissionWithChillModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles,
@@ -661,9 +661,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles,
@@ -693,9 +693,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRoleWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(
@@ -709,9 +709,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRoleWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
@@ -722,9 +722,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRoleWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities
         );
@@ -739,9 +739,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRoleWithStrictModeAndFoundButUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles
@@ -757,9 +757,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRoleWithChillModeAndFoundButUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles
@@ -772,9 +772,9 @@ final class AccessControlListTest extends TestCase
 
     public function testIdentityHasRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             [],
             $this->identities,
             $this->roles,
@@ -796,9 +796,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetControllerAccessWithStrictModeAndUndefinedController()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -810,24 +810,24 @@ final class AccessControlListTest extends TestCase
 
     public function testGetControllerAccessWithChillModeAndUndefinedController()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->assertEquals(
-            AccessControlList::ACCESS_REJECT_ALL,
+            ArrayAccessControlList::ACCESS_REJECT_ALL,
             $acl->getControllerAccess('undefined-controller')
         );
-        $acl->setPolicy(AccessControlList::POLICY_AUTENTICATE);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_AUTENTICATE);
         $this->assertEquals(
-            AccessControlList::ACCESS_AUTHENTICATED_ONLY,
+            ArrayAccessControlList::ACCESS_AUTHENTICATED_ONLY,
             $acl->getControllerAccess('undefined-controller')
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_ACCEPT);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
         $this->assertEquals(
-            AccessControlList::ACCESS_ALL,
+            ArrayAccessControlList::ACCESS_ALL,
             $acl->getControllerAccess('undefined-controller')
         );
 
@@ -836,9 +836,9 @@ final class AccessControlListTest extends TestCase
     // with undefined action and multiple actions defined in controllers list
     public function testGetControllerAccessWithStrictModeAndUndefinedAction()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectExceptionCode(
@@ -854,32 +854,32 @@ final class AccessControlListTest extends TestCase
     // with undefined ction and multiple actions defined in controllers list
     public function testGetControllerAccessWithChillModeAndUndefinedAction()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
 
         $this->assertEquals(
-            AccessControlList::ACCESS_REJECT_ALL,
+            ArrayAccessControlList::ACCESS_REJECT_ALL,
             $acl->getControllerAccess(
                 'MultiplePermissionsController',
                 'undefinedAction'
             )
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_ACCEPT);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
         $this->assertEquals(
-            AccessControlList::ACCESS_ALL,
+            ArrayAccessControlList::ACCESS_ALL,
             $acl->getControllerAccess(
                 'MultiplePermissionsController',
                 'undefinedAction'
             )
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_AUTENTICATE);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_AUTENTICATE);
         $this->assertEquals(
-            AccessControlList::ACCESS_AUTHENTICATED_ONLY,
+            ArrayAccessControlList::ACCESS_AUTHENTICATED_ONLY,
             $acl->getControllerAccess(
                 'MultiplePermissionsController',
                 'undefinedAction'
@@ -889,9 +889,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetControllerAccessWithBadControllerAccess()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectException(AccessControlException::class);
@@ -903,9 +903,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetControllerAccessWithBadActionAccess()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectException(AccessControlException::class);
@@ -920,9 +920,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetControllerAccess()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->assertEquals(
@@ -1028,9 +1028,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithStrictModeAndUndefinedController()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
         $this->expectException(AccessControlException::class);
@@ -1042,9 +1042,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithChillModeAndUndefinedController()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             []
         );
 
@@ -1058,7 +1058,7 @@ final class AccessControlListTest extends TestCase
             $statusRejected->getIdentity()
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_AUTENTICATE);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_AUTENTICATE);
         $statusAuthenticate = $acl->getAccessStatus(
             'user1',
             'undefined-controller'
@@ -1072,7 +1072,7 @@ final class AccessControlListTest extends TestCase
             $statusAuthenticate->getIdentity()
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_ACCEPT);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
         $statusAccept = $acl->getAccessStatus('user1', 'undefined-controller');
         $this->assertEquals(
             Status::PUBLIC,
@@ -1087,9 +1087,9 @@ final class AccessControlListTest extends TestCase
     // with undefined action and multiple actions defined in controllers list
     public function testGetAccessStatusWithStrictModeAndUndefinedAction()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectExceptionCode(
@@ -1106,9 +1106,9 @@ final class AccessControlListTest extends TestCase
     // with undefined ction and multiple actions defined in controllers list
     public function testGetAccessStatusWithChillModeAndUndefinedAction()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1128,7 +1128,7 @@ final class AccessControlListTest extends TestCase
             $statusRejected->getIdentity()
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_ACCEPT);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
         $statusAccepted = $acl->getAccessStatus(
             'user1',
             'MultiplePermissionsController',
@@ -1143,7 +1143,7 @@ final class AccessControlListTest extends TestCase
             $statusAccepted->getIdentity()
         );
 
-        $acl->setPolicy(AccessControlList::POLICY_AUTENTICATE);
+        $acl->setPolicy(ArrayAccessControlList::POLICY_AUTENTICATE);
         $statusAuth = $acl->getAccessStatus(
             'user1',
             'MultiplePermissionsController',
@@ -1161,9 +1161,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithBadControllerAccess()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectException(AccessControlException::class);
@@ -1175,9 +1175,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithBadActionAccess()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers
         );
         $this->expectException(AccessControlException::class);
@@ -1193,9 +1193,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithStrictModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             [],
@@ -1210,9 +1210,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithChillModeAndUndefinedIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             [],
             [],
@@ -1234,9 +1234,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithBadIdentity()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             [],
@@ -1251,9 +1251,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithStrictModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1270,9 +1270,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithChillModeAndUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             $this->roles
@@ -1294,9 +1294,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1314,7 +1314,7 @@ final class AccessControlListTest extends TestCase
             $status->getIdentity()
         );
 
-        $acl->setMode(AccessControlList::MODE_CHILL);
+        $acl->setMode(ArrayAccessControlList::MODE_CHILL);
         $status = $acl->getAccessStatus(
             'user1',
             'MultiplePermissionsController',
@@ -1332,9 +1332,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithNotFoundRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1357,9 +1357,9 @@ final class AccessControlListTest extends TestCase
     public
     function testGetAccessStatusWithStrictModeAndFoundButUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1379,9 +1379,9 @@ final class AccessControlListTest extends TestCase
     public
     function testGetAccessStatusWithChillModeAndFoundButUndefinedPermission()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities
         );
@@ -1402,9 +1402,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithStrictModeAndFoundButUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             $this->roles
@@ -1424,9 +1424,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatusWithChillModeAndFoundButUndefinedRole()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_CHILL,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_CHILL,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             $this->roles
@@ -1448,9 +1448,9 @@ final class AccessControlListTest extends TestCase
 
     public function testGetAccessStatus()
     {
-        $acl = new AccessControlList(
-            AccessControlList::MODE_STRICT,
-            AccessControlList::POLICY_REJECT,
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
             $this->controllers,
             $this->identities,
             $this->roles,

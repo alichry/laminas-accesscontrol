@@ -22,59 +22,31 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Resource;
 
-class Policy implements PolicyInterface
+use AliChry\Laminas\AccessControl\AccessControlException;
+use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
+
+interface ResourceInterface
 {
-    const POLICY_ALLOW = 0;
-    const POLICY_REJECT = 1;
-    const POLICY_AUTHENTICATE = 2;
-    const POLICY_AUTHORIZE = 3;
+    /**
+     * @return string
+     */
+    public function getController();
 
     /**
-     * @var int
+     * @return null|string
      */
-    private $type;
-
-    public function __construct($type)
-    {
-        $this->type = $type;
-    }
-
-    public function getType()
-    {
-        return $this->type;
-    }
+    public function getAction();
 
     /**
-     * @return bool
+     * @return PolicyInterface
      */
-    public function deniesAll(): bool
-    {
-        return $this->type === self::POLICY_REJECT;
-    }
+    public function getPolicy(): PolicyInterface;
 
     /**
-     * @return bool
+     * @throws AccessControlException if the policy does not require a permission
+     * @return PermissionInterface
      */
-    public function isPublic(): bool
-    {
-        return $this->type === self::POLICY_ALLOW;
-    }
-
-    /**
-     * @return bool
-     */
-    public function requiresAuthentication(): bool
-    {
-        return $this->type >= self::POLICY_AUTHENTICATE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function requiresAuthorization(): bool
-    {
-        return $this->type === self::POLICY_AUTHORIZE;
-    }
+    public function getPermission(): PermissionInterface;
 }

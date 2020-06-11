@@ -25,13 +25,13 @@
  * Time: 14:54
  */
 
-use AliChry\Laminas\AccessControl\AccessControlList;
-use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;
+use AliChry\Laminas\AccessControl\ArrayAccessControlList;
+use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory;
 
 return [
     'service_manager' => [
         'factories' => [
-            AccessControlList::class => AccessControlListFactory::class,
+            ArrayAccessControlList::class => ArrayAccessControlListFactory::class,
         ]
     ]
 ];

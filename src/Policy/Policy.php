@@ -22,13 +22,59 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Policy;
 
-interface PermissionInterface
+class Policy implements PolicyInterface
 {
+    const POLICY_ALLOW = 0;
+    const POLICY_REJECT = 1;
+    const POLICY_AUTHENTICATE = 2;
+    const POLICY_AUTHORIZE = 3;
+
     /**
-     * @param IdentityInterface $identity
+     * @var int
+     */
+    private $type;
+
+    public function __construct($type)
+    {
+        $this->type = $type;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
      * @return bool
      */
-    /*public function identityHasPermission($identity);*/
+    public function deniesAll(): bool
+    {
+        return $this->type === self::POLICY_REJECT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublic(): bool
+    {
+        return $this->type === self::POLICY_ALLOW;
+    }
+
+    /**
+     * @return bool
+     */
+    public function requiresAuthentication(): bool
+    {
+        return $this->type === self::POLICY_AUTHENTICATE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function requiresAuthorization(): bool
+    {
+        return $this->type === self::POLICY_AUTHORIZE;
+    }
 }

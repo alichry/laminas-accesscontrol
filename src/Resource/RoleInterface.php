@@ -22,22 +22,15 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Resource;
 
-interface IdentityInterface
+use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
+
+interface RoleInterface
 {
-    /*public function getRoles();*/
-    /*public function getPermissions();*/
-
     /**
-     * @param $role
+     * @param IdentityInterface $identity
      * @return bool
      */
-    public function hasRole($role);
-
-    /**
-     * @param $permission
-     * @return bool
-     */
-    public function hasPermission($permission);
+    /*public function identityHasRole($identity);*/
 }

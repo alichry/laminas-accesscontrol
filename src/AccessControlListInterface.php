@@ -20,30 +20,46 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Date: 2020-05-29
+ * Time: 09:50
  */
 
 namespace AliChry\Laminas\AccessControl;
 
-interface ResourceInterface
+interface AccessControlListInterface
 {
     /**
-     * @return string
+     * @param mixed $identity
+     * @param mixed $permission
+     * @return bool
+     * @throws AccessControlException
      */
-    public function getController();
+    public function identityHasPermission(
+        $identity,
+        $permission
+    ): bool;
 
     /**
-     * @return null|string
+     * @param mixed $identity
+     * @param mixed $role
+     * @return bool
+     * @throws AccessControlException
      */
-    public function getAction();
+    public function identityHasRole(
+        $identity,
+        $role
+    ): bool;
 
     /**
-     * @return PolicyInterface
+     * @param mixed $identity
+     * @param $controller
+     * @param $action
+     * @return Status
      */
-    public function getPolicy(): PolicyInterface;
-
-    /**
-     * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
-     */
-    public function getPermission(): PermissionInterface;
+    public function getAccessStatus(
+        $identity,
+        $controller,
+        $action = null
+    ): Status;
 }
