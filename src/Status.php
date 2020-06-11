@@ -34,7 +34,13 @@ class Status
      * not have specified permission or role for the
      * controller/action
      */
-    const UNAUTHORIZED = -2;
+    const UNAUTHORIZED = -3;
+
+    /**
+     * The given identity is null and therefore is invalid.
+     * This implies that the identity "null' is unauthenticated.
+     */
+    const UNAUTHENTICATED = -2;
 
     /**
      * If controller/action has reject all, or

@@ -37,9 +37,10 @@ class StatusTest extends TestCase
     {
         $codes = [
             null,
-            STATUS::CODE_MIN - 1,
-            STATUS::CODE_MAX + 1,
+            Status::CODE_MIN - 1,
+            Status::CODE_MAX + 1,
             Status::UNAUTHORIZED,
+            Status::UNAUTHENTICATED,
             Status::REJECTED,
             Status::PUBLIC,
             Status::OK
@@ -77,6 +78,7 @@ class StatusTest extends TestCase
                         null === $code
                         || (
                             Status::UNAUTHORIZED !== $code
+                            && Status::UNAUTHENTICATED !== $code
                             && Status::REJECTED !== $code
                             && Status::PUBLIC !== $code
                             && Status::OK !== $code

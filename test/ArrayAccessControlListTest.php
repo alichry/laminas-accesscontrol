@@ -1446,6 +1446,44 @@ final class ArrayAccessControlListTest extends TestCase
         );
     }
 
+    /**
+     * @throws AccessControlException
+     */
+    public function testGetAccessStatusAuthenticateWithEmptyIdentity()
+    {
+        $acl = new ArrayAccessControlList(
+            ArrayAccessControlList::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
+            $this->controllers,
+            $this->identities,
+            $this->roles,
+            $this->permissions
+        );
+        $statuses = [];
+
+        $statuses[] = $acl->getAccessStatus('', 'AuthRequiredController');
+        $statuses[] = $acl->getAccessStatus(
+            '',
+            'MultiplePermissionsController',
+            'authedAction'
+        );
+        $statuses[] = $acl->getAccessStatus(null, 'AuthRequiredController');
+        $statuses[] = $acl->getAccessStatus(
+            null,
+            'MultiplePermissionsController',
+            'authedAction'
+        );
+        foreach ($statuses as $status) {
+            $this->assertSame(
+                Status::UNAUTHENTICATED,
+                $status->getCode()
+            );
+            $this->assertTrue(
+                empty($status->getIdentity())
+            );
+        }
+    }
+
     public function testGetAccessStatus()
     {
         $acl = new ArrayAccessControlList(

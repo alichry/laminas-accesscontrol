@@ -463,6 +463,9 @@ class ArrayAccessControlList implements AccessControlListInterface
             case self::ACCESS_REJECT_ALL:
                 return new Status(Status::REJECTED, $identityName);
             case self::ACCESS_AUTHENTICATED_ONLY:
+                if (empty($identityName)) {
+                    return new Status(Status::UNAUTHENTICATED, $identityName);
+                }
                 return new Status(Status::OK, $identityName);
             default:
                 // permission or role
