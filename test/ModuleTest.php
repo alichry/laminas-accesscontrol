@@ -27,6 +27,9 @@
 
 namespace AliChry\Laminas\AccessControl;
 
+use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;
+use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory;
+use AliChry\Laminas\AccessControl\Factory\IdentityAccessControlListFactory;
 use PHPUnit\Framework\TestCase;
 
 class ModuleTest extends TestCase
@@ -62,20 +65,32 @@ class ModuleTest extends TestCase
             is_array($factoriesConfig),
             'factories key is not an array in config'
         );
-        $aclFactory = $factoriesConfig[ArrayAccessControlList::class] ?? null;
-        $this->assertTrue(
-            isset($aclFactory),
-            sprintf(
-                '%s service is not set in factories config',
-                ArrayAccessControlList::class
-            )
-        );
-        $this->assertTrue(
-            class_exists($aclFactory),
-            sprintf(
-                'factory %s is not found',
-                $aclFactory
-            )
-        );
+        $factories = [
+            ArrayAccessControlList::class => ArrayAccessControlListFactory::class,
+            IdentityAccessControlList::class =>
+                IdentityAccessControlListFactory::class,
+            AccessControlList::class => AccessControlListFactory::class
+        ];
+        foreach ($factories as $service => $expectedFactory) {
+            $factory = $factoriesConfig[$service] ?? null;
+            $this->assertTrue(
+                isset($factory),
+                sprintf(
+                    '%s service is not set in factories config',
+                    $service
+                )
+            );
+            $this->assertTrue(
+                class_exists($factory),
+                sprintf(
+                    'factory %s is not found',
+                    $factory
+                )
+            );
+            $this->assertSame(
+                $expectedFactory,
+                $factory
+            );
+        }
     }
 }
