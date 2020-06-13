@@ -38,7 +38,7 @@ class Status
 
     /**
      * The given identity is null and therefore is invalid.
-     * This implies that the identity "null' is unauthenticated.
+     * This implies that the identity "null" is unauthenticated.
      */
     const UNAUTHENTICATED = -2;
 

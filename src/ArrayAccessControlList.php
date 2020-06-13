@@ -335,6 +335,28 @@ class ArrayAccessControlList implements AccessControlListInterface
         }
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
+    public static function permission($name): string
+    {
+        return self::ACCESS_PREFIX_PERM
+            . self::ACCESS_PREFIX_DELIMITER
+            . $name;
+    }
+
+    /**
+     * @param $name
+     * @return string
+     */
+    public static function role($name): string
+    {
+        return self::ACCESS_PREFIX_ROLE
+            . self::ACCESS_PREFIX_DELIMITER
+            . $name;
+    }
+
     private function checkPolicy($policy): bool
     {
         return $policy === self::POLICY_REJECT
