@@ -25,6 +25,7 @@
 namespace AliChry\Laminas\AccessControl\Resource;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
+use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
 use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
 
 interface ResourceInterface

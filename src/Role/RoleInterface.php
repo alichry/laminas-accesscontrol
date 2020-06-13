@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl\Resource;
+namespace AliChry\Laminas\AccessControl\Role;
 
 use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
 

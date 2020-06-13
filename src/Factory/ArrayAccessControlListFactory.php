@@ -29,7 +29,6 @@ namespace AliChry\Laminas\AccessControl\Factory;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\ArrayAccessControlList;
-use AliChry\Laminas\AccessControl\AccessControlListInterface;
 use AliChry\Laminas\AccessControl\AuthorizationService;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -48,7 +47,7 @@ class ArrayAccessControlListFactory implements FactoryInterface
     const OPTION_IDENTITIES_LIST = 'identities';
 
     /**
-     * Create an object
+     * Create an ArrayAccessControlList object
      *
      * @param  ContainerInterface $container
      * @param  string $requestedName

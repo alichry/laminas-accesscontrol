@@ -20,11 +20,14 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Date: 2020-05-28
+ * Time: 13:11
  */
 
 namespace AliChry\Laminas\AccessControl\Factory;
 
-use AliChry\Laminas\AccessControl\AccessControlList;
+use AliChry\Laminas\AccessControl\IdentityAccessControlList;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -32,10 +35,9 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\ServiceManager\ServiceManager;
 
-class AccessControlListFactory implements FactoryInterface
+class IdentityAccessControlListFactory implements FactoryInterface
 {
     const OPTION_RESOURCE_MANAGER = 'resource_manager';
-    const OPTION_LIST_ADAPTER = 'list_adapter';
 
     /**
      * Create an IdentityAccessControlList object
@@ -58,7 +60,6 @@ class AccessControlListFactory implements FactoryInterface
             );
         }
         $resourceManagerOption = $options[self::OPTION_RESOURCE_MANAGER] ?? null;
-        $listAdapterOption = $options[self::OPTION_LIST_ADAPTER] ?? null;
         if (null === $resourceManagerOption) {
             throw new ServiceNotCreatedException(
                 sprintf(
@@ -68,35 +69,18 @@ class AccessControlListFactory implements FactoryInterface
                 )
             );
         }
-        if (null === $listAdapterOption) {
-            throw new ServiceNotCreatedException(
-                sprintf(
-                    'Expecting key "%s" to be set in options, '
-                    . 'got unset.',
-                    self::OPTION_LIST_ADAPTER
-                )
-            );
-        }
-        $serviceManager = $container->get(ServiceManager::class);
         if (! is_array($resourceManagerOption)) {
             $resourceManager = $container->get($resourceManagerOption);
         } else {
+            $serviceManager = $container->get(ServiceManager::class);
             $resourceManager = $serviceManager->build(
                 $resourceManagerOption['service'] ?? null,
                 $resourceManagerOption['options'] ?? null
             );
         }
-        if (! is_array($listAdapterOption)) {
-            $listAdapter = $container->get($listAdapterOption);
-        } else {
-            $listAdapter = $serviceManager->build(
-                $listAdapterOption['service'] ?? null,
-                $listAdapterOption['options'] ?? null
-            );
-        }
-        return new AccessControlList(
-            $resourceManager,
-            $listAdapter
+
+        return new IdentityAccessControlList(
+            $resourceManager
         );
     }
 }

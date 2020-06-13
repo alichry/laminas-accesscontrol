@@ -24,63 +24,58 @@
 
 namespace AliChry\Laminas\AccessControl;
 
-use AliChry\Laminas\AccessControl\Lists\ListAdapterInterface;
+use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
 
-class AccessControlList extends AbstractAccessControlList
+class IdentityAccessControlList extends AbstractAccessControlList
 {
     /**
-     * @var ListAdapterInterface
-     */
-    private $listAdapter;
-
-    public function __construct($resourceManager, $listAdapter)
-    {
-        parent::__construct($resourceManager);
-        $this->setListAdapter($listAdapter);
-    }
-
-    /**
-     * @return ListAdapterInterface
-     */
-    public function getListAdapter(): ListAdapterInterface
-    {
-        return $this->listAdapter;
-    }
-
-    /**
-     * @param ListAdapterInterface $listAdapter
-     */
-    private function setListAdapter(
-        ListAdapterInterface $listAdapter
-    ): void
-    {
-        $this->listAdapter = $listAdapter;
-    }
-
-    /**
-     * @param $identity
+     * @param null|IdentityInterface $identity
      * @param $permission
      * @return bool
+     * @throws AccessControlException
      */
     public function identityHasPermission($identity, $permission): bool
     {
-        return $this->listAdapter->identityHasPermission(
-            $identity,
-            $permission
-        );
+        if (null === $identity) {
+            return false;
+        }
+        if (! $this->checkIdentity($identity)) {
+            throw new AccessControlException(
+                sprintf(
+                    'Expecting passed identity to be an instance of %s, got: %s',
+                    IdentityInterface::class,
+                    is_object($identity)
+                        ? get_class($identity)
+                        : gettype($identity)
+                )
+            );
+        }
+        return $identity->hasPermission($permission);
     }
 
     /**
-     * @param $identity
+     * @param null|IdentityInterface $identity
      * @param $role
      * @return bool
+     * @throws AccessControlException
      */
     public function identityHasRole($identity, $role): bool
     {
-        return $this->listAdapter->identityHasRole(
-            $identity,
-            $role
-        );
+        if (null === $identity) {
+            return false;
+        }
+        if (! $this->checkIdentity($identity)) {
+            throw new AccessControlException(
+                sprintf(
+                    'Expecting passed identity to be an instance of %s, got: %s',
+                    IdentityInterface::class,
+                    is_object($identity)
+                        ? get_class($identity)
+                        : gettype($identity)
+                )
+            );
+        }
+        return $identity->hasRole($role);
     }
 
     /**
@@ -89,6 +84,8 @@ class AccessControlList extends AbstractAccessControlList
      */
     public function checkIdentity($identity): bool
     {
-        return ! empty($identity);
+        return is_object($identity)
+            && $identity instanceof IdentityInterface;
     }
 }
+

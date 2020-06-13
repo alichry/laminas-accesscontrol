@@ -24,7 +24,7 @@
 
 namespace AliChry\Laminas\AccessControl\Policy;
 
-use AliChry\Laminas\AccessControl\Resource\PermissionInterface;
+use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
 
 interface PolicyInterface
 {

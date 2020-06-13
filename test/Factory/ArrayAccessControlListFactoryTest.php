@@ -29,6 +29,7 @@ namespace AliChry\Laminas\AccessControl\Test\Factory;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\ArrayAccessControlList;
+use AliChry\Laminas\AccessControl\Lists\ArrayListAdapter;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -44,7 +45,7 @@ class ArrayAccessControlListFactoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         $this->mockContainer = $this->createMock(ContainerInterface::class);
-        $this->requestedName = Factory::class;
+        $this->requestedName = null;
     }
 
     public function binaryEnumerator()
@@ -60,7 +61,7 @@ class ArrayAccessControlListFactoryTest extends TestCase
         ];
         // some valid values if a field is in
         $someValidValues = [
-            Factory::OPTION_MODE => ArrayAccessControlList::MODE_STRICT,
+            Factory::OPTION_MODE => ArrayListAdapter::MODE_STRICT,
             Factory::OPTION_POLICY => ArrayAccessControlList::POLICY_REJECT,
             Factory::OPTION_CONTROLLERS_LIST => [],
             Factory::OPTION_IDENTITIES_LIST => [],
@@ -99,6 +100,7 @@ class ArrayAccessControlListFactoryTest extends TestCase
 
     /**
      * @param null $options
+     * @return ArrayAccessControlList|object
      * @throws ContainerException
      */
     private function invokeFactory($options = null)

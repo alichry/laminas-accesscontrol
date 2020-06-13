@@ -22,15 +22,21 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl\Resource;
+namespace AliChry\Laminas\AccessControl\Lists;
 
-use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
-
-interface PermissionInterface
+interface ListAdapterInterface
 {
     /**
-     * @param IdentityInterface $identity
+     * @param $identity
+     * @param $permission
      * @return bool
      */
-    /*public function identityHasPermission($identity);*/
+    public function identityHasPermission($identity, $permission): bool;
+
+    /**
+     * @param $identity
+     * @param $role
+     * @return bool
+     */
+    public function identityHasRole($identity, $role): bool;
 }
