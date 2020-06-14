@@ -42,7 +42,7 @@ interface ResourceInterface
 
     /**
      * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
+     * @return mixed|PermissionInterface
      */
-    public function getPermission(): PermissionInterface;
+    public function getPermission();
 }
