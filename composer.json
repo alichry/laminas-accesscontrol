@@ -13,6 +13,7 @@
         }
     ],
     "require": {
+        "php": "^7.1",
         "laminas/laminas-servicemanager": "^3.4"
     },
     "autoload": {
