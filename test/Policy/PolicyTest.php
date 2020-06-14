@@ -26,8 +26,12 @@ declare(strict_types=1);
 
 namespace AliChry\Laminas\AccessControl\Test\Policy;
 
+use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Policy\Policy;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use TypeError;
+use function array_merge;
 
 class PolicyTest extends TestCase
 {
@@ -38,6 +42,49 @@ class PolicyTest extends TestCase
             1,
             $policy->getType()
         );
+    }
+
+    /**
+     * @dataProvider validTypesProvider
+     * @param $type
+     * @throws AccessControlException
+     */
+    public function testType($type)
+    {
+        $policy = new Policy($type);
+        $this->assertSame(
+            $type,
+            $policy->getType()
+        );
+    }
+
+    /**
+     * @dataProvider invalidTypesProvider
+     * @param $type
+     */
+    public function testInvalidType($type)
+    {
+        $this->expectException(AccessControlException::class);
+        $policy = new Policy($type);
+    }
+
+    /**
+     * @throws AccessControlException
+     */
+    public function testBadType()
+    {
+        $this->expectException(TypeError::class);
+        $policy = new Policy(new stdClass());
+    }
+
+    /**
+     * @throws AccessControlException
+     */
+    public function testBadTypeOnSetType()
+    {
+        $this->expectException(TypeError::class);
+        $policy = new Policy(Policy::POLICY_REJECT);
+        $policy->setType(new stdClass());
     }
 
     public function testDeniiesAll()
@@ -62,5 +109,32 @@ class PolicyTest extends TestCase
     {
         $policy = new Policy(Policy::POLICY_AUTHORIZE);
         $this->assertTrue($policy->requiresAuthorization());
+    }
+
+    public function validTypesProvider()
+    {
+        return [
+            [Policy::POLICY_REJECT],
+            [Policy::POLICY_AUTHORIZE],
+            [Policy::POLICY_AUTHENTICATE],
+            [Policy::POLICY_ALLOW]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidTypesProvider()
+    {
+        $min = Policy::POLICY_REJECT;
+        $max = Policy::POLICY_ALLOW;
+        return array_merge(
+            array_map(function ($type) {
+                return [$type];
+            }, range($min - 10,  miin - 1)),
+            array_map(function ($type) {
+                return [$type];
+            }, range($max + 1, $max + 10))
+        );
     }
 }

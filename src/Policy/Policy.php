@@ -24,6 +24,8 @@
 
 namespace AliChry\Laminas\AccessControl\Policy;
 
+use AliChry\Laminas\AccessControl\AccessControlException;
+
 class Policy implements PolicyInterface
 {
     const POLICY_REJECT = 0;
@@ -36,14 +38,34 @@ class Policy implements PolicyInterface
      */
     private $type;
 
+    /**
+     * Policy constructor.
+     * @param $type
+     * @throws AccessControlException
+     */
     public function __construct($type)
     {
-        $this->type = $type;
+        $this->setType($type);
     }
 
+    /**
+     * @return int
+     */
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param int $type
+     * @throws AccessControlException
+     */
+    public function setType(int $type)
+    {
+        if (! self::checkType($type)) {
+            throw new AccessControlException('Invalid type: ' . $type);
+        }
+        $this->type = $type;
     }
 
     /**
@@ -76,5 +98,17 @@ class Policy implements PolicyInterface
     public function requiresAuthorization(): bool
     {
         return $this->type === self::POLICY_AUTHORIZE;
+    }
+
+    /**
+     * @param $type
+     * @return bool
+     */
+    public static function checkType(int $type): bool
+    {
+        return $type === self::POLICY_REJECT
+            || $type === self::POLICY_AUTHORIZE
+            || $type === self::POLICY_AUTHENTICATE
+            || $type === self::POLICY_ALLOW;
     }
 }
