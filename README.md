@@ -7,7 +7,7 @@ provides 3 methods:
 
 - identityHasPermission(identity, permission)
 - identityHasRole(identity, role)
-- getAccessStatus(identity, controller[, action])
+- getAccessStatus(identity, resourceIdentifier)
 
 An access status, `Status`, is the result of consulting the underlying
 `ListAdapterInterface` and `ResourceManagerInterface`. Multiple status codes
@@ -58,6 +58,7 @@ Policies deal with the default access level for missing entriies in the resource
 
 use AliChry\Laminas\AccessControl\ArrayAccessControlList as ACL;
 use AliChry\Laminas\AccessControl\Lists\ArrayListAdapter as LA;
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifier;
 
 $controllers = [
     TestController::class => ACL::ACCESS_ALL,
@@ -99,24 +100,27 @@ $acl = new ACL(
 
 $unauthStatus = $acl->getAccessStatus(
     'admin@test.com',
-    TestMultipleController::class,
-    'edit'
+    new ResourceIdentifier(
+        TestMultipleController::class,
+        'edit'
+    )
 );
 
 echo 'Code: ' . $unauthStatus->getCode() . PHP_EOL; // Code: -3 (UNAUTHORIZED)
 echo 'Identity: ' . $unauthStatus->getIdentity() . PHP_EOL; // Identity: admin@test.com
-echo 'Messages: ' . implode(', ', $unauthStatus->getMessages()) . PHP_EOL; // identity "admin@test.com" requires perm:edit
+echo 'Messages: ' . implode(', ', $unauthStatus->getMessages()) . PHP_EOL; // Identity "admin@test.com" requires perm:edit
 
 $okStatus = $acl->getAccessStatus(
     'admin@test.com',
-    TestMultipleController::class,
-    'admin'
+    new ResourceIdentifier(
+        TestMultipleController::class,
+        'admin'
+    )
 );
 
 echo 'Code: ' . $okStatus->getCode() . PHP_EOL; // Code: 1 (OK)
 echo 'Identity: ' . $okStatus->getIdentity() . PHP_EOL; // Identity: admin@test.com
 echo 'Messages: ' . implode(', ', $okStatus->getMessages()) . PHP_EOL; //
-
 ```
 
 ## IdentityAccessControlList
