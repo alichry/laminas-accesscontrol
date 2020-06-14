@@ -26,10 +26,10 @@ namespace AliChry\Laminas\AccessControl\Policy;
 
 class Policy implements PolicyInterface
 {
-    const POLICY_ALLOW = 0;
-    const POLICY_REJECT = 1;
+    const POLICY_REJECT = 0;
+    const POLICY_AUTHORIZE = 1;
     const POLICY_AUTHENTICATE = 2;
-    const POLICY_AUTHORIZE = 3;
+    const POLICY_ALLOW = 3;
 
     /**
      * @var int
