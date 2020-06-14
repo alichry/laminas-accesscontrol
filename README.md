@@ -1,4 +1,7 @@
-# Laminas Access Control
+# laminas-accesscontrol
+
+[![Build Status](https://travis-ci.org/alichry/laminas-accesscontrol.svg?branch=master)](https://travis-ci.org/alichry/laminas-accesscontrol)
+
 This module is aimed at providing a simple interface that can run queries againt an access control list pertaining an application's controller or a controller's action as a the target resource. This is should not be used directly, use [https://github.com/alichry/laminas-authorization](alichry/laminas-authorization)
 
 ## Interfaces and implementations
