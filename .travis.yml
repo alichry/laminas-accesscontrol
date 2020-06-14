@@ -5,4 +5,4 @@ php:
   - '7.2'
   - '7.3'
 
-install: travis_retry composer install -no-interaction
+install: travis_retry composer install --no-interaction
