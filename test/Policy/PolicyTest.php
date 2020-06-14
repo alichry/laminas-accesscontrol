@@ -22,27 +22,45 @@
  * SOFTWARE.
  */
 
-namespace AliChry\Laminas\AccessControl\Resource;
+declare(strict_types=1);
 
-use AliChry\Laminas\AccessControl\AccessControlException;
-use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
-use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
+namespace AliChry\Laminas\AccessControl\Test\Policy;
 
-interface ResourceInterface
+use AliChry\Laminas\AccessControl\Policy\Policy;
+use PHPUnit\Framework\TestCase;
+
+class PolicyTest extends TestCase
 {
-    /**
-     * @return ResourceIdentifierInterface
-     */
-    public function getIdentifier();
+    public function testGetType()
+    {
+        $policy = new Policy(1);
+        $this->assertSame(
+            1,
+            $policy->getType()
+        );
+    }
 
-    /**
-     * @return PolicyInterface
-     */
-    public function getPolicy(): PolicyInterface;
+    public function testDeniiesAll()
+    {
+        $policy = new Policy(Policy::POLICY_REJECT);
+        $this->assertTrue($policy->deniesAll());
+    }
 
-    /**
-     * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
-     */
-    public function getPermission(): PermissionInterface;
+    public function testIsPublic()
+    {
+        $policy = new Policy(Policy::POLICY_ALLOW);
+        $this->assertTrue($policy->isPublic());
+    }
+
+    public function testRequiresAuthentication()
+    {
+        $policy = new Policy(Policy::POLICY_AUTHENTICATE);
+        $this->assertTrue($policy->requiresAuthentication());
+    }
+
+    public function testRequiresAuhtorization()
+    {
+        $policy = new Policy(Policy::POLICY_AUTHORIZE);
+        $this->assertTrue($policy->requiresAuthorization());
+    }
 }

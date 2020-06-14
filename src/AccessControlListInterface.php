@@ -27,6 +27,8 @@
 
 namespace AliChry\Laminas\AccessControl;
 
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifierInterface;
+
 interface AccessControlListInterface
 {
     /**
@@ -54,15 +56,10 @@ interface AccessControlListInterface
     ): bool;
 
     /**
-     * @param mixed $identity
-     * @param $controller
-     * @param $action
+     * @param $identity
+     * @param ResourceIdentifierInterface $resourceIdentifier
      * @throws AccessControlException if an error has occurred
      * @return Status
      */
-    public function getAccessStatus(
-        $identity,
-        $controller,
-        $action = null
-    ): Status;
+    public function getAccessStatus($identity, $resourceIdentifier);
 }

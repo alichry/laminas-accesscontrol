@@ -27,9 +27,8 @@ namespace AliChry\Laminas\AccessControl\Resource;
 interface ResourceManagerInterface
 {
     /**
-     * @param $controller
-     * @param null $action
+     * @param ResourceIdentifierInterface $resourceIdentifier
      * @return ResourceInterface
      */
-    public function getResource($controller, $action = null);
+    public function getResource($resourceIdentifier);
 }

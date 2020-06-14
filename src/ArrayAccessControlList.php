@@ -28,6 +28,7 @@
 namespace AliChry\Laminas\AccessControl;
 
 use AliChry\Laminas\AccessControl\Lists\ArrayListAdapter;
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifierInterface;
 
 class ArrayAccessControlList implements AccessControlListInterface
 {
@@ -249,17 +250,17 @@ class ArrayAccessControlList implements AccessControlListInterface
 
     /**
      * @param string $identityName
-     * @param string $controller
-     * @param null|string $action
+     * @param ResourceIdentifierInterface $resourceIdentifier
      * @return Status
      * @throws AccessControlException
      */
     public function getAccessStatus(
         $identityName,
-        $controller,
-        $action = null
+        $resourceIdentifier
     ): Status
     {
+        $controller = $resourceIdentifier->getController();
+        $action = $resourceIdentifier->getAction();
         $access = $this->getControllerAccess($controller, $action);
         switch ($access) {
             case self::ACCESS_ALL:
@@ -290,14 +291,6 @@ class ArrayAccessControlList implements AccessControlListInterface
                             $value
                         );
                         break;
-                    default:
-                        throw new AccessControlException(
-                            sprintf(
-                                'Invalid permission/role format "%s"',
-                                $access
-                            ),
-                            AccessControlException::ACL_INVALID_ACCESS_FORMAT
-                        );
                 }
                 if (true === $authorized) {
                     return new Status(Status::OK, $identityName);
@@ -313,25 +306,6 @@ class ArrayAccessControlList implements AccessControlListInterface
                         )
                     ]
                 );
-        }
-    }
-
-    /**
-     * @param $controller
-     * @param $action
-     * @return bool
-     * @throws AccessControlException
-     */
-    public function needsAuthentication($controller, $action): bool
-    {
-        $access = $this->getControllerAccess($controller, $action);
-        switch ($access) {
-            case self::ACCESS_REJECT_ALL:
-            case self::ACCESS_ALL:
-                return false;
-            case self::ACCESS_AUTHENTICATED_ONLY:
-            default:
-                return true;
         }
     }
 
@@ -372,10 +346,12 @@ class ArrayAccessControlList implements AccessControlListInterface
             case self::ACCESS_AUTHENTICATED_ONLY:
                 return true;
             default:
-                $prefix = explode(self::ACCESS_PREFIX_DELIMITER, $access, 2)[0]
-                    ?? null;
+                $explode = explode(self::ACCESS_PREFIX_DELIMITER, $access, 2);
+                $prefix = $explode[0] ?? null;
+                $value = $explode[1] ?? null;
                 if (
                     null === $prefix
+                    || null === $value
                     || (
                         $prefix !== self::ACCESS_PREFIX_PERM
                         && $prefix !== self::ACCESS_PREFIX_ROLE

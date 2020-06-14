@@ -24,25 +24,15 @@
 
 namespace AliChry\Laminas\AccessControl\Resource;
 
-use AliChry\Laminas\AccessControl\AccessControlException;
-use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
-use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
-
-interface ResourceInterface
+interface ResourceIdentifierInterface
 {
     /**
-     * @return ResourceIdentifierInterface
+     * @return mixed
      */
-    public function getIdentifier();
+    public function getController();
 
     /**
-     * @return PolicyInterface
+     * @return null|mixed
      */
-    public function getPolicy(): PolicyInterface;
-
-    /**
-     * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
-     */
-    public function getPermission(): PermissionInterface;
+    public function getAction();
 }

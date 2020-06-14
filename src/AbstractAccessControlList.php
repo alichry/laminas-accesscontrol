@@ -25,6 +25,7 @@
 namespace AliChry\Laminas\AccessControl;
 
 use AliChry\Laminas\AccessControl\Identity\IdentityInterface;
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifierInterface;
 use AliChry\Laminas\AccessControl\Resource\ResourceManagerInterface;
 
 abstract class AbstractAccessControlList implements AccessControlListInterface
@@ -68,14 +69,13 @@ abstract class AbstractAccessControlList implements AccessControlListInterface
 
     /**
      * @param null|IdentityInterface $identity
-     * @param $controller
-     * @param null $action
+     * @param ResourceIdentifierInterface $resourceIdentifier
      * @return Status
      * @throws AccessControlException
      */
-    public function getAccessStatus($identity, $controller, $action = null): Status
+    public function getAccessStatus($identity, $resourceIdentifier): Status
     {
-        $resource = $this->resourceManager->getResource($controller, $action);
+        $resource = $this->resourceManager->getResource($resourceIdentifier);
         $policy = $resource->getPolicy();
         if ($policy->isPublic()) {
             return new Status(Status::PUBLIC, $identity);

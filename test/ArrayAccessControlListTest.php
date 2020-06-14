@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace AliChry\Laminas\AccessControl\Test;
 
 use AliChry\Laminas\AccessControl\Lists\ArrayListAdapter;
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifier;
 use PHPUnit\Framework\TestCase;
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Status;
@@ -101,7 +102,9 @@ final class ArrayAccessControlListTest extends TestCase
             'foundButUndefinedRoleAction' => 'role:role-not-in-roles',
             'foundButUndefinedPermAction' => 'perm:perm-not-in-perms',
             'undefinedPermAction' => 'perm:undefined-perm',
-            'undefinedRoleAction' => 'role:undefined-role'
+            'undefinedRoleAction' => 'role:undefined-role',
+            'invalidPermAction' => 'thissigncanthelpmebecauseicantread',
+            'invalidPrefixAction' => 'badprefix:test'
         ],
         'BadAccessController' => 'baddie'
     ];
@@ -756,7 +759,7 @@ final class ArrayAccessControlListTest extends TestCase
         $this->expectExceptionCode(
             AccessControlException::ACL_CONTROLLER_NOT_DEFINED)
         ;
-        $acl->getAccessStatus(null, 'undefined-controller');
+        $acl->getAccessStatus(null, new ResourceIdentifier('undefined-controller'));
     }
 
     /**
@@ -769,7 +772,10 @@ final class ArrayAccessControlListTest extends TestCase
             ArrayAccessControlList::POLICY_REJECT
         );
 
-        $statusRejected = $acl->getAccessStatus('user1', 'undefined-controller');
+        $statusRejected = $acl->getAccessStatus(
+            'user1',
+            new ResourceIdentifier('undefined-controller')
+        );
         $this->assertEquals(
             Status::REJECTED,
             $statusRejected->getCode()
@@ -782,7 +788,7 @@ final class ArrayAccessControlListTest extends TestCase
         $acl->setPolicy(ArrayAccessControlList::POLICY_AUTHENTICATE);
         $statusAuthenticate = $acl->getAccessStatus(
             'user1',
-            'undefined-controller'
+            new ResourceIdentifier('undefined-controller')
         );
         $this->assertEquals(
             Status::OK,
@@ -794,7 +800,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
 
         $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
-        $statusAccept = $acl->getAccessStatus('user1', 'undefined-controller');
+        $statusAccept = $acl->getAccessStatus(
+            'user1',
+            new ResourceIdentifier('undefined-controller')
+        );
         $this->assertEquals(
             Status::PUBLIC,
             $statusAccept->getCode()
@@ -822,8 +831,10 @@ final class ArrayAccessControlListTest extends TestCase
         $this->expectException(AccessControlException::class);
         $acl->getAccessStatus(
             null,
-            'MultiplePermissionsController',
-            'undefinedAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedAction'
+            )
         );
     }
 
@@ -842,8 +853,10 @@ final class ArrayAccessControlListTest extends TestCase
 
         $statusRejected = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedAction'
+            )
         );
 
         $this->assertEquals(
@@ -858,8 +871,10 @@ final class ArrayAccessControlListTest extends TestCase
         $acl->setPolicy(ArrayAccessControlList::POLICY_ACCEPT);
         $statusAccepted = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedAction'
+            )
         );
         $this->assertEquals(
             Status::PUBLIC,
@@ -873,8 +888,10 @@ final class ArrayAccessControlListTest extends TestCase
         $acl->setPolicy(ArrayAccessControlList::POLICY_AUTHENTICATE);
         $statusAuth = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedAction'
+            )
         );
         $this->assertEquals(
             Status::OK,
@@ -900,7 +917,10 @@ final class ArrayAccessControlListTest extends TestCase
         $this->expectExceptionCode(
             AccessControlException::ACL_INVALID_ACCESS_FORMAT
         );
-        $acl->getAccessStatus(null, 'BadAccessController');
+        $acl->getAccessStatus(
+            null,
+            new ResourceIdentifier('BadAccessController')
+        );
     }
 
     /**
@@ -919,8 +939,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $acl->getAccessStatus(
             null,
-            'MultiplePermissionsController',
-            'badAccessAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'badAccessAction'
+            )
         );
     }
 
@@ -941,7 +963,10 @@ final class ArrayAccessControlListTest extends TestCase
         $this->expectExceptionCode(
             AccessControlException::ACL_IDENTITY_NOT_DEFINED
         );
-        $acl->getAccessStatus('undefined-identity', 'AdminController');
+        $acl->getAccessStatus(
+            'undefined-identity',
+            new ResourceIdentifier('AdminController')
+        );
     }
 
     /**
@@ -959,7 +984,7 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $statusUnauth = $acl->getAccessStatus(
             'undefined-identity',
-            'AdminController'
+            new ResourceIdentifier('AdminController')
         );
         $this->assertEquals(
             Status::UNAUTHORIZED,
@@ -988,7 +1013,10 @@ final class ArrayAccessControlListTest extends TestCase
         $this->expectExceptionCode(
             AccessControlException::ACL_BAD_IDENTITY
         );
-        $acl->getAccessStatus('bad-identity', 'AdminController');
+        $acl->getAccessStatus(
+            'bad-identity',
+            new ResourceIdentifier('AdminController')
+        );
     }
 
     /**
@@ -1008,8 +1036,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedPermAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedPermAction'
+            )
         );
     }
 
@@ -1027,8 +1057,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $status = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedPermAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedPermAction'
+            )
         );
         $this->assertEquals(
             Status::UNAUTHORIZED,
@@ -1053,8 +1085,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $status = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedRoleAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedRoleAction'
+            )
         );
         $this->assertEquals(
             Status::UNAUTHORIZED,
@@ -1068,8 +1102,10 @@ final class ArrayAccessControlListTest extends TestCase
         $acl->getArrayListAdapter()->setMode(ArrayListAdapter::MODE_CHILL);
         $status = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'undefinedRoleAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'undefinedRoleAction'
+            )
         );
         $this->assertEquals(
             Status::UNAUTHORIZED,
@@ -1095,8 +1131,10 @@ final class ArrayAccessControlListTest extends TestCase
 
         $status = $acl->getAccessStatus(
             'user1',
-            'MultiplePermissionsController',
-            'notFoundRoleAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'notFoundRoleAction'
+            )
         );
         $this->assertEquals(
             Status::UNAUTHORIZED,
@@ -1128,8 +1166,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $acl->getAccessStatus(
             'user4',
-            'MultiplePermissionsController',
-            'foundButUndefinedPermAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'foundButUndefinedPermAction'
+            )
         );
     }
 
@@ -1147,8 +1187,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $status = $acl->getAccessStatus(
             'user5',
-            'MultiplePermissionsController',
-            'foundButUndefinedPermAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'foundButUndefinedPermAction'
+            )
         );
         $this->assertEquals(
             Status::OK,
@@ -1180,8 +1222,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $acl->getAccessStatus(
             'user4',
-            'MultiplePermissionsController',
-            'foundButUndefinedRoleAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'foundButUndefinedRoleAction'
+            )
         );
     }
 
@@ -1199,8 +1243,10 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $status = $acl->getAccessStatus(
             'user4',
-            'MultiplePermissionsController',
-            'foundButUndefinedRoleAction'
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'foundButUndefinedRoleAction'
+            )
         );
         $this->assertEquals(
             Status::OK,
@@ -1209,6 +1255,52 @@ final class ArrayAccessControlListTest extends TestCase
         $this->assertEquals(
             'user4',
             $status->getIdentity()
+        );
+    }
+
+    /**
+     * @throws AccessControlException
+     */
+    public function testGetAccessStatusWithInvalidFormat()
+    {
+        $acl = new ArrayAccessControlList(
+            ArrayListAdapter::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
+            $this->controllers
+        );
+        $this->expectException(AccessControlException::class);
+        $this->expectExceptionCode(
+            AccessControlException::ACL_INVALID_ACCESS_FORMAT
+        );
+        $acl->getAccessStatus(
+            null,
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'invalidPermAction'
+            )
+        );
+    }
+
+    /**
+     * @throws AccessControlException
+     */
+    public function testGetAccessStatusWithInvalidPrefixFormat()
+    {
+        $acl = new ArrayAccessControlList(
+            ArrayListAdapter::MODE_STRICT,
+            ArrayAccessControlList::POLICY_REJECT,
+            $this->controllers
+        );
+        $this->expectException(AccessControlException::class);
+        $this->expectExceptionCode(
+            AccessControlException::ACL_INVALID_ACCESS_FORMAT
+        );
+        $acl->getAccessStatus(
+            null,
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'invalidPrefixAction'
+            )
         );
     }
 
@@ -1227,17 +1319,27 @@ final class ArrayAccessControlListTest extends TestCase
         );
         $statuses = [];
 
-        $statuses[] = $acl->getAccessStatus('', 'AuthRequiredController');
         $statuses[] = $acl->getAccessStatus(
             '',
-            'MultiplePermissionsController',
-            'authedAction'
+            new ResourceIdentifier('AuthRequiredController')
         );
-        $statuses[] = $acl->getAccessStatus(null, 'AuthRequiredController');
+        $statuses[] = $acl->getAccessStatus(
+            '',
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'authedAction'
+            )
+        );
         $statuses[] = $acl->getAccessStatus(
             null,
-            'MultiplePermissionsController',
-            'authedAction'
+            new ResourceIdentifier('AuthRequiredController')
+        );
+        $statuses[] = $acl->getAccessStatus(
+            null,
+            new ResourceIdentifier(
+                'MultiplePermissionsController',
+                'authedAction'
+            )
         );
         foreach ($statuses as $status) {
             $this->assertSame(
@@ -1469,8 +1571,10 @@ final class ArrayAccessControlListTest extends TestCase
                 $total++;
                 $status = $acl->getAccessStatus(
                     $identity,
-                    $testCase['controller'],
-                    $testCase['action'] ?? null
+                    new ResourceIdentifier(
+                        $testCase['controller'],
+                        $testCase['action'] ?? null
+                    )
                 );
                 $this->assertEquals(
                     $testCase['status'],
@@ -1482,5 +1586,25 @@ final class ArrayAccessControlListTest extends TestCase
                 );
             }
         }
+    }
+
+    public function testPermissionHelper()
+    {
+        $this->assertSame(
+            ArrayAccessControlList::ACCESS_PREFIX_PERM
+            . ArrayAccessControlList::ACCESS_PREFIX_DELIMITER
+            . 'test',
+            ArrayAccessControlList::permission('test')
+        );
+    }
+
+    public function testRoleHelper()
+    {
+        $this->assertSame(
+            ArrayAccessControlList::ACCESS_PREFIX_ROLE
+            . ArrayAccessControlList::ACCESS_PREFIX_DELIMITER
+            . 'test',
+            ArrayAccessControlList::role('test')
+        );
     }
 }

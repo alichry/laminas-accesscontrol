@@ -25,6 +25,8 @@
  * Time: 19:13
  */
 
+declare(strict_types=1);
+
 namespace AliChry\Laminas\AccessControl;
 
 use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;

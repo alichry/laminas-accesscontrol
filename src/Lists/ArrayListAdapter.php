@@ -397,22 +397,13 @@ class ArrayListAdapter implements ListAdapterInterface
             || $mode === self::MODE_CHILL;
     }
 
-    // #########################################################
-    // #########################################################
-    // #########################################################
+    /* Leaving this for future reference
 
-    /**
-     * @param $identity
-     */
     private function addIdentity($identity)
     {
         $this->createIdentityIfNotExists($identity);
     }
 
-    /**
-     * @param $identity
-     * @param $role
-     */
     private function addIdentityRole($identity, $role)
     {
         $this->createIdentityIfNotExists($identity);
@@ -428,10 +419,6 @@ class ArrayListAdapter implements ListAdapterInterface
         $this->identities[$identity]['roles'][] = $role;
     }
 
-    /**
-     * @param $role
-     * @param $permission
-     */
     private function addRolePermission($role, $permission)
     {
         $this->createRoleIfNotExists($role);
@@ -439,10 +426,6 @@ class ArrayListAdapter implements ListAdapterInterface
         $this->roles[$role][] = $permission;
     }
 
-    /**
-     * @param $role
-     * @param arrray $permissions
-     */
     private function addRolePermissions($role, arrray $permissions)
     {
         $this->createRoleIfNotExists($role);
@@ -455,10 +438,6 @@ class ArrayListAdapter implements ListAdapterInterface
         );
     }
 
-    /**
-     * @param $identity
-     * @param $permission
-     */
     private function addIdentityPermission($identity, $permission)
     {
         $this->createIdentityIfNotExists($identity);
@@ -466,10 +445,6 @@ class ArrayListAdapter implements ListAdapterInterface
         $this->identities[$identity]['permissions'][] = $permission;
     }
 
-    /**
-     * @param array $identities
-     * @return bool
-     */
     private function checkIdentities(array $identities)
     {
         foreach ($identities as $identity) {
@@ -492,9 +467,6 @@ class ArrayListAdapter implements ListAdapterInterface
         return true;
     }
 
-    /**
-     * @param $identity
-     */
     private function createIdentityIfNotExists($identity)
     {
         if (isset($this->identities[$identity])) {
@@ -506,9 +478,6 @@ class ArrayListAdapter implements ListAdapterInterface
         ];
     }
 
-    /**
-     * @param $role
-     */
     private function createRoleIfNotExists($role)
     {
         if (isset($this->roles[$role])) {
@@ -524,4 +493,5 @@ class ArrayListAdapter implements ListAdapterInterface
         }
         $this->permissions[] = $permission;
     }
+    */
 }

@@ -25,6 +25,8 @@
  * Time: 16:04
  */
 
+declare(strict_types=1);
+
 namespace AliChry\Laminas\AccessControl\Test\Factory;
 
 use AliChry\Laminas\AccessControl\AccessControlException;
@@ -139,5 +141,23 @@ class ArrayAccessControlListFactoryTest extends TestCase
                 )
             );
         }
+    }
+
+    /**
+     * @throws ContainerException
+     */
+    public function testWrappedAccessControlException()
+    {
+        $options = [
+            Factory::OPTION_MODE => ArrayListAdapter::MODE_STRICT,
+            Factory::OPTION_POLICY => ArrayAccessControlList::POLICY_REJECT,
+            // baddie, exception should be thrown
+            Factory::OPTION_CONTROLLERS_LIST => 1,
+            Factory::OPTION_IDENTITIES_LIST => [],
+            Factory::OPTION_ROLES_LIST => [],
+            Factory::OPTION_PERMISSIONS_LIST => []
+        ];
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->invokeFactory($options);
     }
 }

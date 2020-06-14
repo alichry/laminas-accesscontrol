@@ -30,6 +30,7 @@ use AliChry\Laminas\AccessControl\AbstractAccessControlList;
 use AliChry\Laminas\AccessControl\AccessControlException;
 use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
 use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
+use AliChry\Laminas\AccessControl\Resource\ResourceIdentifierInterface;
 use AliChry\Laminas\AccessControl\Resource\ResourceInterface;
 use AliChry\Laminas\AccessControl\Resource\ResourceManagerInterface;
 use AliChry\Laminas\AccessControl\Status;
@@ -57,6 +58,39 @@ class AbstractAccessControlListTest extends TestCase
      * @dataProvider identityProvider
      * @param $identity
      */
+    public function testGetAccessStatusWithInconclusivePolicy($identity)
+    {
+        $mockResourceManager = $this->createMock(
+            ResourceManagerInterface::class
+        );
+        $mockResource = $this->createMock(
+            ResourceInterface::class
+        );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
+        $mockPolicyInconclusive = $this->createMock(
+            PolicyInterface::class
+        );
+        $mockResource->expects($this->once())
+            ->method('getPolicy')
+            ->willReturn($mockPolicyInconclusive);
+
+        $mockResourceManager->expects($this->once())
+            ->method('getResource')
+            ->with($this->identicalTo($mockResourceIdentifier))
+            ->willReturn($mockResource);
+        $acl = $this->mockAbstractAccessControlList($mockResourceManager);
+        $this->expectException(
+            AccessControlException::class
+        );
+        $acl->getAccessStatus($identity, $mockResourceIdentifier);
+    }
+
+    /**
+     * @dataProvider identityProvider
+     * @param $identity
+     */
     public function testGetAccessStatusPublic($identity)
     {
         $mockResourceManager = $this->createMock(
@@ -64,6 +98,9 @@ class AbstractAccessControlListTest extends TestCase
         );
         $mockResource = $this->createMock(
             ResourceInterface::class
+        );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
         );
         $mockPolicyPublic = $this->createMock(
             PolicyInterface::class
@@ -79,11 +116,11 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
-        $status = $acl->getAccessStatus($identity, 'TestController', 'test');
+        $status = $acl->getAccessStatus($identity, $mockResourceIdentifier);
         $this->assertSame(
             Status::PUBLIC,
             $status->getCode()
@@ -106,6 +143,9 @@ class AbstractAccessControlListTest extends TestCase
         $mockResource = $this->createMock(
             ResourceInterface::class
         );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
         $mockPolicyDeniesAll = $this->createMock(
             PolicyInterface::class
         );
@@ -120,11 +160,11 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
-        $status = $acl->getAccessStatus($identity, 'TestController', 'test');
+        $status = $acl->getAccessStatus($identity, $mockResourceIdentifier);
         $this->assertSame(
             Status::REJECTED,
             $status->getCode()
@@ -147,6 +187,9 @@ class AbstractAccessControlListTest extends TestCase
         $mockResource = $this->createMock(
             ResourceInterface::class
         );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
         $mockPolicyRequiresAuthentication = $this->createMock(
             PolicyInterface::class
         );
@@ -161,18 +204,18 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
         if (null !== $identity) {
             $acl->expects($this->once())
                 ->method('checkIdentity')
-                ->with($identity)
+                ->with($this->identicalTo($identity))
                 ->willReturn(true);
         }
 
-        $status = $acl->getAccessStatus($identity, 'TestController', 'test');
+        $status = $acl->getAccessStatus($identity, $mockResourceIdentifier);
         $this->assertSame(
             null !== $identity
                 ? Status::OK
@@ -199,6 +242,9 @@ class AbstractAccessControlListTest extends TestCase
         $mockResource = $this->createMock(
             ResourceInterface::class
         );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
         $mockPolicyRequiresAuthentication = $this->createMock(
             PolicyInterface::class
         );
@@ -213,17 +259,17 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
         $acl->expects($this->once())
             ->method('checkIdentity')
-            ->with($badIdentity)
+            ->with($this->identicalTo($badIdentity))
             ->willReturn(false);
 
         $this->expectException(AccessControlException::class);
-        $acl->getAccessStatus($badIdentity, 'TestController', 'test');
+        $acl->getAccessStatus($badIdentity, $mockResourceIdentifier);
     }
 
     /**
@@ -237,6 +283,9 @@ class AbstractAccessControlListTest extends TestCase
         );
         $mockResource = $this->createMock(
             ResourceInterface::class
+        );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
         );
         $mockPolicyRequiresAuthorization = $this->createMock(
             PolicyInterface::class
@@ -258,7 +307,7 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
@@ -266,11 +315,13 @@ class AbstractAccessControlListTest extends TestCase
         if (null !== $identity) {
             $acl->expects($this->once())
                 ->method('identityHasPermission')
-                ->with($identity, $mockPermission)
-                ->willReturn(true);
+                ->with(
+                    $this->identicalTo($identity),
+                    $this->identicalTo($mockPermission)
+                )->willReturn(true);
         }
 
-        $status = $acl->getAccessStatus($identity, 'TestController', 'test');
+        $status = $acl->getAccessStatus($identity, $mockResourceIdentifier);
         $this->assertSame(
             null !== $identity
                 ? Status::OK
@@ -295,6 +346,9 @@ class AbstractAccessControlListTest extends TestCase
         $mockResource = $this->createMock(
             ResourceInterface::class
         );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
         $mockPolicyRequiresAuthorization = $this->createMock(
             PolicyInterface::class
         );
@@ -315,7 +369,7 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
@@ -325,7 +379,7 @@ class AbstractAccessControlListTest extends TestCase
                 ->with($identity, $mockPermission)
                 ->willReturn(false);
         }
-        $status = $acl->getAccessStatus($identity, 'TestController', 'test');
+        $status = $acl->getAccessStatus($identity, $mockResourceIdentifier);
         $this->assertSame(
             Status::UNAUTHORIZED,
             $status->getCode()
@@ -350,6 +404,9 @@ class AbstractAccessControlListTest extends TestCase
         $mockResource = $this->createMock(
             ResourceInterface::class
         );
+        $mockResourceIdentifier = $this->createMock(
+            ResourceIdentifierInterface::class
+        );
         $mockPolicyAuthorization = $this->createMock(
             PolicyInterface::class
         );
@@ -368,18 +425,18 @@ class AbstractAccessControlListTest extends TestCase
 
         $mockResourceManager->expects($this->once())
             ->method('getResource')
-            ->with('TestController', 'test')
+            ->with($this->identicalTo($mockResourceIdentifier))
             ->willReturn($mockResource);
 
         $acl = $this->mockAbstractAccessControlList($mockResourceManager);
         $acl->expects($this->once())
             ->method('identityHasPermission')
-            ->with($badIdentity)
+            ->with($this->identicalTo($badIdentity))
             ->willThrowException(new AccessControlException('bad identity babe'));
 
         $this->expectException(AccessControlException::class);
         $this->expectExceptionMessage('bad identity babe');
-        $acl->getAccessStatus($badIdentity, 'TestController', 'test');
+        $acl->getAccessStatus($badIdentity, $mockResourceIdentifier);
     }
 
     /**

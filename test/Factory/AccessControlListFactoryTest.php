@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace AliChry\Laminas\AccessControl\Test\Factory;
 
 use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory

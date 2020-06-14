@@ -24,25 +24,53 @@
 
 namespace AliChry\Laminas\AccessControl\Resource;
 
-use AliChry\Laminas\AccessControl\AccessControlException;
-use AliChry\Laminas\AccessControl\Permission\PermissionInterface;
-use AliChry\Laminas\AccessControl\Policy\PolicyInterface;
-
-interface ResourceInterface
+class ResourceIdentifier implements ResourceIdentifierInterface
 {
     /**
-     * @return ResourceIdentifierInterface
+     * @var mixed
      */
-    public function getIdentifier();
+    private $controller;
 
     /**
-     * @return PolicyInterface
+     * @var null|mixed
      */
-    public function getPolicy(): PolicyInterface;
+    private $action;
+
+    public function __construct($controller, $action = null)
+    {
+        $this->setController($controller);
+        $this->setAction($action);
+    }
 
     /**
-     * @throws AccessControlException if the policy does not require a permission
-     * @return PermissionInterface
+     * @return mixed
      */
-    public function getPermission(): PermissionInterface;
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    /**
+     * @param $controller
+     */
+    public function setController($controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param $action
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+    }
 }

@@ -105,7 +105,7 @@ class ArrayAccessControlListFactory implements FactoryInterface
                 $roles,
                 $permissions
             );
-        } catch (AccessControlException $e) {
+        } catch (\Throwable $e) {
             throw new ServiceNotCreatedException(
                 sprintf(
                     'Unable to create ArrayAccessControlList, exception thrown '

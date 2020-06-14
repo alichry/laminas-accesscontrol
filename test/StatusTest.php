@@ -25,6 +25,8 @@
  * Time: 11:44
  */
 
+declare(strict_types=1);
+
 namespace AliChry\Laminas\AccessControl\Test;
 
 use AliChry\Laminas\AccessControl\AccessControlException;

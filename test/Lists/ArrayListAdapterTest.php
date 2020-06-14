@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace AliChry\Laminas\AccessControl\Test\Lists;
 
 use AliChry\Laminas\AccessControl\Lists\ArrayListAdapter;
@@ -157,13 +159,6 @@ class ArrayListAdapterTest extends TestCase
         );
         $this->assertEquals($this->permissions, $list->getPermissions());
     }
-    /**
-     * ##################################################
-     * ##################################################
-     * ##################################################
-     * ##################################################
-     * ##################################################
-     */
 
     /**
      * @throws AccessControlException
@@ -348,6 +343,28 @@ class ArrayListAdapterTest extends TestCase
             $list->getIdentity('bad-identity')
         );
     }
+
+    /**
+     * @throws AccessControlException
+     */
+    public function testGetIdentityWithBadIdentityObject()
+    {
+        $list = new ArrayListAdapter(
+            ArrayListAdapter::MODE_STRICT,
+            [
+                'bad-identity-object' => new \stdClass()
+            ]
+        );
+        $this->expectException(AccessControlException::class);
+        $this->expectExceptionCode(AccessControlException::ACL_BAD_IDENTITY);
+        $list->getIdentity('bad-identity-object');
+
+        $this->assertEquals(
+            null,
+            $list->getIdentity('bad-identity-object')
+        );
+    }
+
 
     /**
      * @throws AccessControlException

@@ -113,6 +113,10 @@ class IdentityAccessControlListTest extends TestCase
 
         $acl = new IdentityAccessControlList($mockResourceManager);
         $this->assertSame(
+            false,
+            $acl->identityHasPermission(null, $mockPermissionTrue)
+        );
+        $this->assertSame(
             true,
             $acl->identityHasPermission($mockIdentityTrue, $mockPermissionTrue)
         );
@@ -140,6 +144,9 @@ class IdentityAccessControlListTest extends TestCase
         $acl->identityHasRole($identity,$mockPermission);
     }
 
+    /**
+     * @throws AccessControlException
+     */
     public function testIdentityHasRole()
     {
         $mockResourceManager = $this->createMock(
@@ -161,6 +168,10 @@ class IdentityAccessControlListTest extends TestCase
             ->willReturn(false);
 
         $acl = new IdentityAccessControlList($mockResourceManager);
+        $this->assertSame(
+            false,
+            $acl->identityHasRole(null, $mockRoleTrue)
+        );
         $this->assertSame(
             true,
             $acl->identityHasRole($mockIdentityTrue, $mockRoleTrue)
