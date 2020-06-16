@@ -34,5 +34,5 @@ interface ResourceIdentifierInterface
     /**
      * @return null|mixed
      */
-    public function getAction();
+    public function getMethod();
 }

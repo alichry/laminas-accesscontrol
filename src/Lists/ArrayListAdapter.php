@@ -52,7 +52,7 @@ class ArrayListAdapter implements ListAdapterInterface
      * does not have any extra roles or permissions as well as
      * not defining a permissions list at the cost of relying
      * on the policy selected for checking against undefined
-     * controllers/actions
+     * controllers/methods
      */
     private $mode;
 

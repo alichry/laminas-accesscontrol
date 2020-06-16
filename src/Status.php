@@ -32,7 +32,7 @@ class Status
     /**
      * The given identity is not authorized, i.e. does
      * not have specified permission or role for the
-     * controller/action
+     * controller/method
      */
     const UNAUTHORIZED = -3;
 
@@ -43,7 +43,7 @@ class Status
     const UNAUTHENTICATED = -2;
 
     /**
-     * If controller/action has reject all, or
+     * If controller/method has reject all, or
      * policy is reject and controller undefined in list
      */
     const REJECTED = -1;
@@ -57,7 +57,7 @@ class Status
     /**
      * the given identity is authorized but not necessarily
      * authenticated, i.e. given identity does have specified
-     * permission or role for the controller/action.
+     * permission or role for the controller/method.
      * This does not imply if the user is authenticated.
      * Checking if authenticated is the purpose
      * of AuthenticationService

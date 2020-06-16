@@ -68,11 +68,11 @@ $controllers = [
     TestController::class => ACL::ACCESS_ALL,
     TestAuthController::class => ACL::ACCESS_AUTHENTICATED_ONLY,
     TestMultipleController::class => [
-        // actions
-        'get' => ACL::ACCESS_ALL,
+        // methods
+        'getAction' => ACL::ACCESS_ALL,
         'disable' => ACL::ACCESS_REJECT_ALL,
         'admin' => ACL::role('admin'),
-        'edit' => ACL::permission('edit')
+        'editAction' => ACL::permission('edit')
     ]
 ];
 $identities = [
@@ -106,7 +106,7 @@ $unauthStatus = $acl->getAccessStatus(
     'admin@test.com',
     new ResourceIdentifier(
         TestMultipleController::class,
-        'edit'
+        'editAction'
     )
 );
 

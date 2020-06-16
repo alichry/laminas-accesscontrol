@@ -51,7 +51,7 @@ class ArrayAccessControlList implements AccessControlListInterface
     /**
      * @var int
      * Policy helps dictate when filtering against an
-     * undefined controller or controller action in
+     * undefined controller or controller method in
      * the controllers array
      */
     private $policy;
@@ -61,11 +61,11 @@ class ArrayAccessControlList implements AccessControlListInterface
      * Associative array where the keys represent
      * the controller's class name and the values
      * are either an (associative array with keys
-     * as actions where its values indicate the
+     * as methods where its values indicate the
      * permission names) or (a string implying the
      * permission or required authentication level)
-     * Controllers/actions are the objects that the
-     * identities are given permissions for.
+     * Controllers/methods are the objects (resources)
+     * that the identities are given permissions for.
      * This is the resource list
      */
     private $controllers;
@@ -190,11 +190,11 @@ class ArrayAccessControlList implements AccessControlListInterface
 
     /**
      * @param string $controller
-     * @param ?string $action
+     * @param null|string $method
      * @return int
      * @throws AccessControlException
      */
-    public function getControllerAccess($controller, $action = null)
+    public function getControllerAccess($controller, $method = null)
     {
         $access = $this->controllers[$controller] ?? null;
         $isArray = is_array($access);
@@ -202,7 +202,7 @@ class ArrayAccessControlList implements AccessControlListInterface
             null === $access
             || (
                 true === $isArray
-                && ! isset($access[$action])
+                && ! isset($access[$method])
             )
         ) {
             if (
@@ -211,13 +211,13 @@ class ArrayAccessControlList implements AccessControlListInterface
             ) {
                 throw new AccessControlException(
                     sprintf(
-                        'Controller/action not registered in controllers array,
-                        controller: %s, action: %s',
-                        $controller, (string) $action
+                        'Controller/method not registered in controllers array,
+                        controller: %s, method: %s',
+                        $controller, (string) $method
                     ),
                     ! $access
                         ? AccessControlException::ACL_CONTROLLER_NOT_DEFINED
-                        : AccessControlException::ACL_ACTION_NOT_DEFINED
+                        : AccessControlException::ACL_METHOD_NOT_DEFINED
                 );
             }
             switch ($this->getPolicy()) {
@@ -232,15 +232,15 @@ class ArrayAccessControlList implements AccessControlListInterface
         if (! $isArray) {
             $value = $access;
         } else {
-            $value = $access[$action];
+            $value = $access[$method];
         }
         if (! $this->checkAccess($value)) {
             throw new AccessControlException(
                 sprintf(
                     'Invalid permission/role value for controller: %s, '
-                    . ' action: %s',
+                    . ' method: %s',
                     $controller,
-                    $action
+                    $method
                 ),
                 AccessControlException::ACL_INVALID_ACCESS_FORMAT
             );
@@ -260,8 +260,8 @@ class ArrayAccessControlList implements AccessControlListInterface
     ): Status
     {
         $controller = $resourceIdentifier->getController();
-        $action = $resourceIdentifier->getAction();
-        $access = $this->getControllerAccess($controller, $action);
+        $method = $resourceIdentifier->getMethod();
+        $access = $this->getControllerAccess($controller, $method);
         switch ($access) {
             case self::ACCESS_ALL:
                 return new Status(Status::PUBLIC, $identityName);

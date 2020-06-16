@@ -34,12 +34,12 @@ class ResourceIdentifier implements ResourceIdentifierInterface
     /**
      * @var null|mixed
      */
-    private $action;
+    private $method;
 
-    public function __construct($controller, $action = null)
+    public function __construct($controller, $method = null)
     {
         $this->setController($controller);
-        $this->setAction($action);
+        $this->setMethod($method);
     }
 
     /**
@@ -61,16 +61,16 @@ class ResourceIdentifier implements ResourceIdentifierInterface
     /**
      * @return mixed|null
      */
-    public function getAction()
+    public function getMethod()
     {
-        return $this->action;
+        return $this->method;
     }
 
     /**
-     * @param $action
+     * @param $method
      */
-    public function setAction($action)
+    public function setMethod($method)
     {
-        $this->action = $action;
+        $this->method = $method;
     }
 }

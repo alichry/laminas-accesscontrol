@@ -553,7 +553,7 @@ final class ArrayAccessControlListTest extends TestCase
             $this->controllers
         );
         $this->expectExceptionCode(
-            AccessControlException::ACL_ACTION_NOT_DEFINED
+            AccessControlException::ACL_METHOD_NOT_DEFINED
         );
         $this->expectException(AccessControlException::class);
         $acl->getControllerAccess(
@@ -826,7 +826,7 @@ final class ArrayAccessControlListTest extends TestCase
             $this->controllers
         );
         $this->expectExceptionCode(
-            AccessControlException::ACL_ACTION_NOT_DEFINED
+            AccessControlException::ACL_METHOD_NOT_DEFINED
         );
         $this->expectException(AccessControlException::class);
         $acl->getAccessStatus(

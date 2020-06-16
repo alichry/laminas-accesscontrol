@@ -39,8 +39,8 @@ class AccessControlException extends \Exception
     const ACL_BAD_IDENTITY = 7;
     const ACL_BAD_ROLE = 8;
     const ACL_CONTROLLER_NOT_DEFINED = 9;
-    const ACL_ACTION_NOT_DEFINED = 10;
-    const ACL_ACTION_NULL = 11;
-    const ACL_DUPLICATE_ACTION = 12;
+    const ACL_METHOD_NOT_DEFINED = 10;
+    const ACL_METHOD_NULL = 11;
+    const ACL_DUPLICATE_METHOD = 12;
     const ACS_INVALID_CODE = 13;
 }
