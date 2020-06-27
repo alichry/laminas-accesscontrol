@@ -49,7 +49,7 @@ the configuration, this will lead `ArrayAccessControlList` to assume that the
 omitted identity has no permissions at all. No exception will be thrown if a
 permission is referenced in the identity list but not in the permission list.
 
-Policies deal with the default access level for missing entriies in the resources list
+Policies deal with the default access level for missing entries in the resources list
 
 - Reject: if the target resource is not found, then reject all requests.
 - Authenticate: if the target resource is not found, then assume it requires authentication.
@@ -57,7 +57,7 @@ Policies deal with the default access level for missing entriies in the resource
 
 ### Example
 
-```
+```php
 <?php
 
 use AliChry\Laminas\AccessControl\ArrayAccessControlList as ACL;
@@ -147,3 +147,26 @@ entity types or by providing your custom implementation.
 `ResourceManager` and `ListAdapterInterface`. Only one implementation of
 `ListAdapterInterface` exists, `ArrayListAdapter`, which is utilized by
 `ArrayAccessControlList`
+
+## Configuration
+You can define access control lists, adapters and resource managers under
+alichry.access_control.list, alichry.access_control.list_adapter and 
+alicherry.access_control.resource_manager respectively. See 
+`config/modules.config.php`. Each service entry should consist of name as
+the key mapped to either a service, typically a FQCN, or an array consisting of
+the following keys:
+- service: the service that is registered with service manager
+- options: an array that will be passed to the corresponding factory of the
+referenced service
+
+Please note that the referenced service names should have a registered 
+corresponding factory with the service manager.
+
+The registered services will also be retrievable from the service manager using:
+- alichry.access_control.list.$key
+- alichry.access_control.list_adapter.$key
+- alichry.access_control.resource_manager.$key
+
+This allows you to provide factory build options from the configuration to the
+corresponding instance factory, and in turn the returned instance will be cached
+by the service manager.

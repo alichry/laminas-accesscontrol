@@ -14,7 +14,8 @@
     ],
     "require": {
         "php": "^7.1",
-        "laminas/laminas-servicemanager": "^3.4"
+        "laminas/laminas-servicemanager": "^3.4",
+        "laminas/laminas-mvc": "^3.1"
     },
     "autoload": {
         "psr-4": {

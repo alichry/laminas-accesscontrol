@@ -67,18 +67,36 @@ class IdentityAccessControlListFactoryTest extends TestCase
     }
 
     /**
+     * @dataProvider notAStringProvider
+     * @param $value
+     * @throws ContainerException
+     */
+    public function testBadResourceManager($value)
+    {
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->invokeFactory(
+            [
+                Factory::OPTION_RESOURCE_MANAGER => $value
+            ]
+        );
+    }
+
+    /**
      * @throws ContainerException
      */
     public function testInvoke()
     {
+        $key = 'rm';
+        $prefix = 'alichry.access_control.resource_manager.';
+
         $mockRM = $this->createMock(ResourceManagerInterface::class);
         $options = [
-            Factory::OPTION_RESOURCE_MANAGER => ResourceManagerInterface::class
+            Factory::OPTION_RESOURCE_MANAGER => 'rm'
         ];
 
         $this->mockContainer->expects($this->once())
             ->method('get')
-            ->with(ResourceManagerInterface::class)
+            ->with($prefix . $key)
             ->willReturn($mockRM);
 
         $acl = new IdentityAccessControlList($mockRM);
@@ -94,43 +112,16 @@ class IdentityAccessControlListFactoryTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
+     * @return array
      */
-    public function testInvokeWithResourceManagerBuildOptions()
+    public function notAStringProvider()
     {
-        $mockServiceManager = $this->createMock(ServiceManager::class);
-        $mockRM = $this->createMock(ResourceManagerInterface::class);
-        $buildOptions = [
-            'service' => ResourceManagerInterface::class,
-            'options' => [
-                'test_option' => true
-            ]
+        return [
+            [1],
+            [1.0],
+            [[]],
+            [new \stdClass()]
         ];
-        $options = [
-            Factory::OPTION_RESOURCE_MANAGER => $buildOptions
-        ];
-
-        $this->mockContainer->expects($this->once())
-            ->method('get')
-            ->with(ServiceManager::class)
-            ->willReturn($mockServiceManager);
-        $mockServiceManager->expects($this->once())
-            ->method('build')
-            ->with(
-                $buildOptions['service'] ?? null,
-                $buildOptions['options'] ?? null
-            )->willReturn($mockRM);
-
-        $acl = new IdentityAccessControlList($mockRM);
-        $built = $this->invokeFactory($options);
-        $this->assertEquals(
-            $acl,
-            $built
-        );
-        $this->assertSame(
-            $acl->getResourceManager(),
-            $built->getResourceManager()
-        );
     }
 
     /**

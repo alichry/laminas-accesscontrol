@@ -72,6 +72,22 @@ class AccessControlListFactoryTest extends TestCase
     }
 
     /**
+     * @dataProvider notAStringProvider
+     * @param $rm
+     * @throws ContainerException
+     */
+    public function testBadResourceManager($rm)
+    {
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->invokeFactory(
+            [
+                Factory::OPTION_RESOURCE_MANAGER => $rm,
+                Factory::OPTION_LIST_ADAPTER => '' // dummy
+            ]
+        );
+    }
+
+    /**
      * @throws ContainerException
      */
     public function testNoResourceManagerWithListAdapter()
@@ -98,6 +114,22 @@ class AccessControlListFactoryTest extends TestCase
     }
 
     /**
+     * @dataProvider notAStringProvider
+     * @param $la
+     * @throws ContainerException
+     */
+    public function testBadListAdapter($la)
+    {
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->invokeFactory(
+            [
+                Factory::OPTION_LIST_ADAPTER => $la,
+                Factory::OPTION_RESOURCE_MANAGER => '' // dummy
+            ]
+        );
+    }
+
+    /**
      * @throws ContainerException
      */
     public function testNoListAdapterWithResourceManager()
@@ -117,11 +149,15 @@ class AccessControlListFactoryTest extends TestCase
      */
     public function testInvoke()
     {
+        $rmPrefix = 'alichry.access_control.resource_manager.';
+        $laPrefix = 'alichry.access_control.list_adapter.';
+        $rm = 'rm';
+        $la = 'la';
         $mockRM = $this->createMock(ResourceManagerInterface::class);
         $mockLA = $this->createMock(ListAdapterInterface::class);
         $options = [
-            Factory::OPTION_RESOURCE_MANAGER => ResourceManagerInterface::class,
-            Factory::OPTION_LIST_ADAPTER => ListAdapterInterface::class
+            Factory::OPTION_RESOURCE_MANAGER => $rm,
+            Factory::OPTION_LIST_ADAPTER => $la
         ];
 
         $this->mockContainer->expects($this->exactly(3))
@@ -130,8 +166,8 @@ class AccessControlListFactoryTest extends TestCase
                 $this->returnValueMap(
                     [
                         [ServiceManager::class, $this->mockServiceManager],
-                        [ResourceManagerInterface::class, $mockRM],
-                        [ListAdapterInterface::class, $mockLA]
+                        [$rmPrefix . $rm, $mockRM],
+                        [$laPrefix . $la, $mockLA]
                     ]
                 )
             );
@@ -153,68 +189,16 @@ class AccessControlListFactoryTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
+     * @return array
      */
-    public function testInvokeWithBuildOptions()
+    public function notAStringProvider()
     {
-        $mockServiceManager = $this->createMock(ServiceManager::class);
-        $mockRM = $this->createMock(ResourceManagerInterface::class);
-        $mockLA = $this->createMock(ListAdapterInterface::class);
-        $resourceManagerBuildOptions = [
-            'service' => ResourceManagerInterface::class,
-            'options' => [
-                'test_option' => true
-            ]
+        return [
+            [1],
+            [1.0],
+            [[]],
+            [new \stdClass()]
         ];
-        $listAdapterBuildOptions = [
-            'service' => ListAdapterInterface::class,
-            'options' => [
-                'test_option' => false
-            ]
-        ];
-        $options = [
-            Factory::OPTION_RESOURCE_MANAGER => $resourceManagerBuildOptions,
-            Factory::OPTION_LIST_ADAPTER => $listAdapterBuildOptions
-        ];
-
-        $this->mockContainer->expects($this->once())
-            ->method('get')
-            ->with(ServiceManager::class)
-            ->willReturn($mockServiceManager);
-
-        $mockServiceManager->expects($this->exactly(2))
-            ->method('build')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [
-                            $resourceManagerBuildOptions['service'] ?? null,
-                            $resourceManagerBuildOptions['options'] ?? null,
-                            $mockRM
-                        ],
-                        [
-                            $listAdapterBuildOptions['service'] ?? null,
-                            $listAdapterBuildOptions['options'] ?? null,
-                            $mockLA
-                        ]
-                    ]
-                )
-            );
-
-        $acl = new AccessControlList($mockRM, $mockLA);
-        $built = $this->invokeFactory($options);
-        $this->assertEquals(
-            $acl,
-            $built
-        );
-        $this->assertSame(
-            $acl->getResourceManager(),
-            $built->getResourceManager()
-        );
-        $this->assertSame(
-            $acl->getListAdapter(),
-            $built->getListAdapter()
-        );
     }
 
     /**

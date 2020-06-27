@@ -131,7 +131,7 @@ class PolicyTest extends TestCase
         return array_merge(
             array_map(function ($type) {
                 return [$type];
-            }, range($min - 10,  miin - 1)),
+            }, range($min - 10,  $min - 1)),
             array_map(function ($type) {
                 return [$type];
             }, range($max + 1, $max + 10))

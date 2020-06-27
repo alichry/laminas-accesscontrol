@@ -69,15 +69,20 @@ class IdentityAccessControlListFactory implements FactoryInterface
                 )
             );
         }
-        if (! is_array($resourceManagerOption)) {
-            $resourceManager = $container->get($resourceManagerOption);
-        } else {
-            $serviceManager = $container->get(ServiceManager::class);
-            $resourceManager = $serviceManager->build(
-                $resourceManagerOption['service'] ?? null,
-                $resourceManagerOption['options'] ?? null
+        if (! is_string($resourceManagerOption)) {
+            throw new ServiceNotCreatedException(
+                sprintf(
+                    'Expecting key "%s" to be a string, got %s',
+                    self::OPTION_RESOURCE_MANAGER,
+                    gettype($resourceManagerOption)
+                )
             );
         }
+        $prefix = 'alichry.access_control.resource_manager.';
+        if (strpos($resourceManagerOption, $prefix) === false) {
+            $resourceManagerOption = $prefix . $resourceManagerOption;
+        }
+        $resourceManager = $container->get($resourceManagerOption);
 
         return new IdentityAccessControlList(
             $resourceManager

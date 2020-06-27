@@ -27,10 +27,91 @@
 
 namespace AliChry\Laminas\AccessControl;
 
-class Module
+use Laminas\EventManager\EventInterface;
+use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceManager;
+
+class Module implements BootstrapListenerInterface
 {
+    const CONFIG_ROOT_KEY = 'alichry';
+    const CONFIG_MODULE_KEY = 'access_control';
+    const CONFIG_LIST_KEY = 'list';
+    const CONFIG_RESOURCE_MANAGER_KEY = 'resource_manager';
+    const CONFIG_LIST_ADAPTER_KEY = 'list_adapter';
+
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    /**
+     * @param EventInterface $e
+     * @throws AccessControlException
+     */
+    public function onBootstrap(EventInterface $e)
+    {
+        if (! $e instanceof MvcEvent) {
+            throw new AccessControlException(
+                sprintf(
+                    'Expecting event to be an instance of %s, got %s',
+                    MvcEvent::class,
+                    is_object($e) ? get_class($e) : gettype($e)
+                )
+            );
+        }
+        $serviceManager = $e->getApplication()->getServiceManager();
+        $this->registerBuildDelegators($serviceManager);
+    }
+
+    /**
+     * @param ServiceManager $serviceManager
+     */
+    private function registerBuildDelegators(ServiceManager $serviceManager)
+    {
+        $config = $serviceManager->get('Config');
+        $config = $config[self::CONFIG_ROOT_KEY][self::CONFIG_MODULE_KEY] ?? [];
+
+        $resourceManagers = $config[self::CONFIG_RESOURCE_MANAGER_KEY] ?? [];
+        $listAdapters = $config[self::CONFIG_LIST_ADAPTER_KEY] ?? [];
+        $lists = $config[self::CONFIG_LIST_KEY] ?? [];
+
+        foreach ($resourceManagers as $name => $resourceManager) {
+            $service = ! is_array($resourceManager)
+                ? $resourceManager
+                : ($resourceManager['service'] ?? null);
+
+            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
+            $serviceManager->setService(
+                $key,
+                $service
+            );
+        }
+
+        foreach ($listAdapters as $name => $listAdapter) {
+            $service = ! is_array($listAdapter)
+                ? $listAdapter
+                : $listAdapter['service'] ?? null;
+
+
+            $serviceManager->setService(
+                self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name,
+                $service
+            );
+        }
+
+        foreach ($lists as $name => $list) {
+            $service = ! is_array($list)
+                ? $list
+                : $list['service'] ?? null;
+
+            $serviceManager->setService(
+                self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_LIST_KEY . '.' . $name,
+                $service
+            );
+        }
     }
 }

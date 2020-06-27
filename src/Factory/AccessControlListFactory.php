@@ -77,23 +77,38 @@ class AccessControlListFactory implements FactoryInterface
                 )
             );
         }
+        if (! is_string($resourceManagerOption)) {
+            throw new ServiceNotCreatedException(
+                sprintf(
+                    'Expecting key "%s" to be a string, got %s',
+                    self::OPTION_RESOURCE_MANAGER,
+                    gettype($resourceManagerOption)
+                )
+            );
+        }
+        if (! is_string($listAdapterOption)) {
+            throw new ServiceNotCreatedException(
+                sprintf(
+                    'Expecting key "%s" to be a string, got %s',
+                    self::OPTION_LIST_ADAPTER,
+                    gettype($listAdapterOption)
+                )
+            );
+        }
         $serviceManager = $container->get(ServiceManager::class);
-        if (! is_array($resourceManagerOption)) {
-            $resourceManager = $container->get($resourceManagerOption);
-        } else {
-            $resourceManager = $serviceManager->build(
-                $resourceManagerOption['service'] ?? null,
-                $resourceManagerOption['options'] ?? null
-            );
+        $rmPefix = 'alichry.access_control.resource_manager.';
+        if (strpos($resourceManagerOption, $rmPefix) === false) {
+            $resourceManagerOption = $rmPefix . $resourceManagerOption;
         }
-        if (! is_array($listAdapterOption)) {
-            $listAdapter = $container->get($listAdapterOption);
-        } else {
-            $listAdapter = $serviceManager->build(
-                $listAdapterOption['service'] ?? null,
-                $listAdapterOption['options'] ?? null
-            );
+        $resourceManager = $container->get($resourceManagerOption);
+
+
+        $laPrefix = 'alichry.access_control.list_adapter.';
+        if (strpos($listAdapterOption, $laPrefix) === false) {
+            $listAdapterOption = $laPrefix . $listAdapterOption;
         }
+        $listAdapter = $container->get($listAdapterOption);
+
         return new AccessControlList(
             $resourceManager,
             $listAdapter

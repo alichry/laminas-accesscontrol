@@ -32,10 +32,57 @@ namespace AliChry\Laminas\AccessControl;
 use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;
 use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory;
 use AliChry\Laminas\AccessControl\Factory\IdentityAccessControlListFactory;
+use Laminas\EventManager\EventInterface;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use MongoDB\Driver\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 class ModuleTest extends TestCase
 {
+    /**
+     * @var Module
+     */
+    private $module;
+
+    /**
+     * @var \string[][][][]
+     */
+    private $config = [
+        'alichry' => [
+            'access_control' => [
+                'list_adapter' => [
+                    'one' => '1',
+                    'two' => '2',
+                    'three' => [
+                        'service' => '3'
+                    ]
+                ],
+                'resource_manager' => [
+                    'four' => '4',
+                    'five' => '5',
+                    'six' => [
+                        'service' => '6'
+                    ],
+                ],
+                'list' => [
+                    'seven' => '7',
+                    'eight' => '8',
+                    'nine' => [
+                        'service' => '9'
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    public function setUp()
+    {
+        $this->module = new Module();
+    }
+
     public function testGetConfig()
     {
         $module = new Module();
@@ -47,8 +94,7 @@ class ModuleTest extends TestCase
 
     public function testConfig()
     {
-        $module = new Module();
-        $config = $module->getConfig();
+        $config = $this->module->getConfig();
         $serviceManagerConfig = $config['service_manager'] ?? null;
         $this->assertTrue(
             isset($serviceManagerConfig),
@@ -94,5 +140,62 @@ class ModuleTest extends TestCase
                 $factory
             );
         }
+    }
+
+    public function testOnBootsrapBadEvent()
+    {
+        $e = $this->createMock(EventInterface::class);
+        $this->expectException(AccessControlException::class);
+        $this->module->onBootstrap($e);
+    }
+
+    public function testOnBootstrapRegisterDeligatorsBadServiceLocator()
+    {
+        $mockEvent = $this->createMock(MvcEvent::class);
+        $mockApplication = $this->createMock(Application::class);
+        $mockServiceManager = $this->createMock(ServiceLocatorInterface::class);
+        $mockEvent->expects($this->once())
+            ->method('getApplication')
+            ->willReturn($mockApplication);
+        $mockApplication->expects($this->once())
+            ->method('getServiceManager')
+            ->willReturn($mockServiceManager);
+        $this->expectException(\TypeError::class);
+        $this->module->onBootstrap($mockEvent);
+    }
+
+    public function testOnBootstrapRegisterDeligators()
+    {
+        $config = $this->config;
+        $mockEvent = $this->createMock(MvcEvent::class);
+        $mockApplication = $this->createMock(Application::class);
+        $mockServiceManager = $this->createMock(ServiceManager::class);
+        $mockEvent->expects($this->once())
+            ->method('getApplication')
+            ->willReturn($mockApplication);
+        $mockApplication->expects($this->once())
+            ->method('getServiceManager')
+            ->willReturn($mockServiceManager);
+        $mockServiceManager->expects($this->once())
+            ->method('get')
+            ->with($this->identicalTo('Config'))
+            ->willReturn($config);
+
+        $mockServiceManager->expects($this->exactly(9))
+            ->method('setService')
+            ->will(
+                $this->returnCallback(function ($name, $service) use (&$config) {
+                    $pos = &$config;
+                    foreach (explode('.', $name) as $key) {
+                        $pos = &$pos[$key];
+                    }
+                    $this->assertSame(
+                        is_array($pos) ? $pos['service'] : $pos,
+                        $service
+                    );
+                    unset($pos);
+                })
+            );
+        $this->module->onBootstrap($mockEvent);
     }
 }

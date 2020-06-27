@@ -40,5 +40,12 @@ return [
                 IdentityAccessControlListFactory::class,
             AccessControlList::class => AccessControlListFactory::class
         ]
+    ],
+    'alichry' => [
+        'access_control' => [
+            'resource_manager' => [],
+            'list_adapter' => [],
+            'list' => []
+        ]
     ]
 ];
