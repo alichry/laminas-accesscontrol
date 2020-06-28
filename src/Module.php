@@ -27,6 +27,7 @@
 
 namespace AliChry\Laminas\AccessControl;
 
+use AliChry\Laminas\AccessControl\Factory\BuildDelegator;
 use Laminas\EventManager\EventInterface;
 use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
 use Laminas\Mvc\MvcEvent;
@@ -76,41 +77,32 @@ class Module implements BootstrapListenerInterface
         $listAdapters = $config[self::CONFIG_LIST_ADAPTER_KEY] ?? [];
         $lists = $config[self::CONFIG_LIST_KEY] ?? [];
 
-        $aliases = [];
+        $factories = [];
 
         foreach ($listAdapters as $name => $listAdapter) {
-            $service = ! is_array($listAdapter)
-                ? $listAdapter
-                : $listAdapter['service'] ?? null;
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name;
 
-            $aliases[$key] = $service;
+            $factories[$key] = BuildDelegator::class;
         }
 
         foreach ($resourceManagers as $name => $resourceManager) {
-            $service = ! is_array($resourceManager)
-                ? $resourceManager
-                : ($resourceManager['service'] ?? null);
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
 
-            $aliases[$key] = $service;
+            $factories[$key] = BuildDelegator::class;
         }
 
         foreach ($lists as $name => $list) {
-            $service = ! is_array($list)
-                ? $list
-                : $list['service'] ?? null;
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_LIST_KEY . '.' . $name;
 
-            $aliases[$key] = $service;
+            $factories[$key] = BuildDelegator::class;
         }
 
         $serviceManager->configure(
             [
-                'aliases' => $aliases
+                'factories' => $factories
             ]
         );
     }

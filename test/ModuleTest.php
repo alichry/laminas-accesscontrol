@@ -31,6 +31,7 @@ namespace AliChry\Laminas\AccessControl;
 
 use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;
 use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory;
+use AliChry\Laminas\AccessControl\Factory\BuildDelegator;
 use AliChry\Laminas\AccessControl\Factory\IdentityAccessControlListFactory;
 use Laminas\EventManager\EventInterface;
 use Laminas\Mvc\Application;
@@ -182,18 +183,18 @@ class ModuleTest extends TestCase
             ->willReturn($config);
         $mockServiceManager->expects($this->once())
             ->method('configure')
-            ->with($this->callback(function ($aliases) use ($config) {
-                $expectedAliases = [];
+            ->with($this->callback(function ($factories) use ($config) {
+                $expectedFactories = [];
                 $prefix = 'alichry.access_control.';
                 $ac = $config['alichry']['access_control'];
                 foreach ($ac as $parentKey => $next) {
                     foreach ($next as $key => $service) {
-                        $expectedAliases[$prefix . $parentKey . '.' . $key] =
-                            is_array($service) ? $service['service'] : $service;
+                        $expectedFactories[$prefix . $parentKey . '.' . $key] =
+                            BuildDelegator::class;
                     }
                 }
-                $expected = ['aliases' => $expectedAliases];
-                return $aliases === $expected;
+                $expected = ['factories' => $expectedFactories];
+                return $factories === $expected;
             }));
 
         $this->module->onBootstrap($mockEvent);
