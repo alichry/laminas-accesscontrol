@@ -76,42 +76,42 @@ class Module implements BootstrapListenerInterface
         $listAdapters = $config[self::CONFIG_LIST_ADAPTER_KEY] ?? [];
         $lists = $config[self::CONFIG_LIST_KEY] ?? [];
 
-        foreach ($resourceManagers as $name => $resourceManager) {
-            $service = ! is_array($resourceManager)
-                ? $resourceManager
-                : ($resourceManager['service'] ?? null);
-
-            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
-            $serviceManager->setService(
-                $key,
-                $service
-            );
-        }
+        $factories = [];
 
         foreach ($listAdapters as $name => $listAdapter) {
             $service = ! is_array($listAdapter)
                 ? $listAdapter
                 : $listAdapter['service'] ?? null;
+            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name;
 
+            $factories[$key] = $service;
+        }
 
-            $serviceManager->setService(
-                self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name,
-                $service
-            );
+        foreach ($resourceManagers as $name => $resourceManager) {
+            $service = ! is_array($resourceManager)
+                ? $resourceManager
+                : ($resourceManager['service'] ?? null);
+            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
+
+            $factories[$key] = $service;
         }
 
         foreach ($lists as $name => $list) {
             $service = ! is_array($list)
                 ? $list
                 : $list['service'] ?? null;
+            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
+                . '.' . self::CONFIG_LIST_KEY . '.' . $name;
 
-            $serviceManager->setService(
-                self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_LIST_KEY . '.' . $name,
-                $service
-            );
+            $factories[$key] = $service;
         }
+
+        $serviceManager->configure(
+            [
+                'factories' => $factories
+            ]
+        );
     }
 }

@@ -180,22 +180,22 @@ class ModuleTest extends TestCase
             ->method('get')
             ->with($this->identicalTo('Config'))
             ->willReturn($config);
-
-        $mockServiceManager->expects($this->exactly(9))
-            ->method('setService')
-            ->will(
-                $this->returnCallback(function ($name, $service) use (&$config) {
-                    $pos = &$config;
-                    foreach (explode('.', $name) as $key) {
-                        $pos = &$pos[$key];
+        $mockServiceManager->expects($this->once())
+            ->method('configure')
+            ->with($this->callback(function ($factories) use ($config) {
+                $expectedFactories = [];
+                $prefix = 'alichry.access_control.';
+                $ac = $config['alichry']['access_control'];
+                foreach ($ac as $parentKey => $next) {
+                    foreach ($next as $key => $service) {
+                        $expectedFactories[$prefix . $parentKey . '.' . $key] =
+                            is_array($service) ? $service['service'] : $service;
                     }
-                    $this->assertSame(
-                        is_array($pos) ? $pos['service'] : $pos,
-                        $service
-                    );
-                    unset($pos);
-                })
-            );
+                }
+                $expected = ['factories' => $expectedFactories];
+                return $factories === $expected;
+            }));
+
         $this->module->onBootstrap($mockEvent);
     }
 }
