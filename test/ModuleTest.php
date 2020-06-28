@@ -182,18 +182,18 @@ class ModuleTest extends TestCase
             ->willReturn($config);
         $mockServiceManager->expects($this->once())
             ->method('configure')
-            ->with($this->callback(function ($factories) use ($config) {
-                $expectedFactories = [];
+            ->with($this->callback(function ($aliases) use ($config) {
+                $expectedAliases = [];
                 $prefix = 'alichry.access_control.';
                 $ac = $config['alichry']['access_control'];
                 foreach ($ac as $parentKey => $next) {
                     foreach ($next as $key => $service) {
-                        $expectedFactories[$prefix . $parentKey . '.' . $key] =
+                        $expectedAliases[$prefix . $parentKey . '.' . $key] =
                             is_array($service) ? $service['service'] : $service;
                     }
                 }
-                $expected = ['factories' => $expectedFactories];
-                return $factories === $expected;
+                $expected = ['aliases' => $expectedAliases];
+                return $aliases === $expected;
             }));
 
         $this->module->onBootstrap($mockEvent);

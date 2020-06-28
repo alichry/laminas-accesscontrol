@@ -76,7 +76,7 @@ class Module implements BootstrapListenerInterface
         $listAdapters = $config[self::CONFIG_LIST_ADAPTER_KEY] ?? [];
         $lists = $config[self::CONFIG_LIST_KEY] ?? [];
 
-        $factories = [];
+        $aliases = [];
 
         foreach ($listAdapters as $name => $listAdapter) {
             $service = ! is_array($listAdapter)
@@ -85,7 +85,7 @@ class Module implements BootstrapListenerInterface
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name;
 
-            $factories[$key] = $service;
+            $aliases[$key] = $service;
         }
 
         foreach ($resourceManagers as $name => $resourceManager) {
@@ -95,7 +95,7 @@ class Module implements BootstrapListenerInterface
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
 
-            $factories[$key] = $service;
+            $aliases[$key] = $service;
         }
 
         foreach ($lists as $name => $list) {
@@ -105,12 +105,12 @@ class Module implements BootstrapListenerInterface
             $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
                 . '.' . self::CONFIG_LIST_KEY . '.' . $name;
 
-            $factories[$key] = $service;
+            $aliases[$key] = $service;
         }
 
         $serviceManager->configure(
             [
-                'factories' => $factories
+                'aliases' => $aliases
             ]
         );
     }
