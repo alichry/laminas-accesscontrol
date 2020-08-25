@@ -27,18 +27,16 @@
 
 declare(strict_types=1);
 
-namespace AliChry\Laminas\AccessControl;
+namespace AliChry\Laminas\AccessControl\Test;
 
+use AliChry\Laminas\AccessControl\AccessControlList;
+use AliChry\Laminas\AccessControl\ArrayAccessControlList;
 use AliChry\Laminas\AccessControl\Factory\AccessControlListFactory;
 use AliChry\Laminas\AccessControl\Factory\ArrayAccessControlListFactory;
 use AliChry\Laminas\AccessControl\Factory\BuildDelegator;
 use AliChry\Laminas\AccessControl\Factory\IdentityAccessControlListFactory;
-use Laminas\EventManager\EventInterface;
-use Laminas\Mvc\Application;
-use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\ServiceManager\ServiceManager;
-use MongoDB\Driver\Exception\RuntimeException;
+use AliChry\Laminas\AccessControl\IdentityAccessControlList;
+use AliChry\Laminas\AccessControl\Module;
 use PHPUnit\Framework\TestCase;
 
 class ModuleTest extends TestCase
@@ -141,62 +139,15 @@ class ModuleTest extends TestCase
                 $factory
             );
         }
-    }
-
-    public function testOnBootsrapBadEvent()
-    {
-        $e = $this->createMock(EventInterface::class);
-        $this->expectException(AccessControlException::class);
-        $this->module->onBootstrap($e);
-    }
-
-    public function testOnBootstrapRegisterDeligatorsBadServiceLocator()
-    {
-        $mockEvent = $this->createMock(MvcEvent::class);
-        $mockApplication = $this->createMock(Application::class);
-        $mockServiceManager = $this->createMock(ServiceLocatorInterface::class);
-        $mockEvent->expects($this->once())
-            ->method('getApplication')
-            ->willReturn($mockApplication);
-        $mockApplication->expects($this->once())
-            ->method('getServiceManager')
-            ->willReturn($mockServiceManager);
-        $this->expectException(\TypeError::class);
-        $this->module->onBootstrap($mockEvent);
-    }
-
-    public function testOnBootstrapRegisterDeligators()
-    {
-        $config = $this->config;
-        $mockEvent = $this->createMock(MvcEvent::class);
-        $mockApplication = $this->createMock(Application::class);
-        $mockServiceManager = $this->createMock(ServiceManager::class);
-        $mockEvent->expects($this->once())
-            ->method('getApplication')
-            ->willReturn($mockApplication);
-        $mockApplication->expects($this->once())
-            ->method('getServiceManager')
-            ->willReturn($mockServiceManager);
-        $mockServiceManager->expects($this->once())
-            ->method('get')
-            ->with($this->identicalTo('Config'))
-            ->willReturn($config);
-        $mockServiceManager->expects($this->once())
-            ->method('configure')
-            ->with($this->callback(function ($factories) use ($config) {
-                $expectedFactories = [];
-                $prefix = 'alichry.access_control.';
-                $ac = $config['alichry']['access_control'];
-                foreach ($ac as $parentKey => $next) {
-                    foreach ($next as $key => $service) {
-                        $expectedFactories[$prefix . $parentKey . '.' . $key] =
-                            BuildDelegator::class;
-                    }
-                }
-                $expected = ['factories' => $expectedFactories];
-                return $factories === $expected;
-            }));
-
-        $this->module->onBootstrap($mockEvent);
+        $keysConfig = $config['alichry']['build_delegator']['keys'] ?? [];
+        $expectedKeys = [
+            'alichry.access_control.resource_manager',
+            'alichry.access_control.list_adapter',
+            'alichry.access_control.list',
+        ];
+        $this->assertSame(
+            $expectedKeys,
+            $keysConfig
+        );
     }
 }

@@ -46,6 +46,13 @@ return [
             'resource_manager' => [],
             'list_adapter' => [],
             'list' => []
+        ],
+        'build_delegator' => [
+            'keys' => [
+                'alichry.access_control.resource_manager',
+                'alichry.access_control.list_adapter',
+                'alichry.access_control.list'
+            ]
         ]
     ]
 ];

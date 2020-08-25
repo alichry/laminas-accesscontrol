@@ -28,12 +28,8 @@
 namespace AliChry\Laminas\AccessControl;
 
 use AliChry\Laminas\AccessControl\Factory\BuildDelegator;
-use Laminas\EventManager\EventInterface;
-use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
-use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\ServiceManager;
 
-class Module implements BootstrapListenerInterface
+class Module
 {
     const CONFIG_ROOT_KEY = 'alichry';
     const CONFIG_MODULE_KEY = 'access_control';
@@ -44,66 +40,5 @@ class Module implements BootstrapListenerInterface
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';
-    }
-
-    /**
-     * @param EventInterface $e
-     * @throws AccessControlException
-     */
-    public function onBootstrap(EventInterface $e)
-    {
-        if (! $e instanceof MvcEvent) {
-            throw new AccessControlException(
-                sprintf(
-                    'Expecting event to be an instance of %s, got %s',
-                    MvcEvent::class,
-                    is_object($e) ? get_class($e) : gettype($e)
-                )
-            );
-        }
-        $serviceManager = $e->getApplication()->getServiceManager();
-        $this->registerBuildDelegators($serviceManager);
-    }
-
-    /**
-     * @param ServiceManager $serviceManager
-     */
-    private function registerBuildDelegators(ServiceManager $serviceManager)
-    {
-        $config = $serviceManager->get('Config');
-        $config = $config[self::CONFIG_ROOT_KEY][self::CONFIG_MODULE_KEY] ?? [];
-
-        $resourceManagers = $config[self::CONFIG_RESOURCE_MANAGER_KEY] ?? [];
-        $listAdapters = $config[self::CONFIG_LIST_ADAPTER_KEY] ?? [];
-        $lists = $config[self::CONFIG_LIST_KEY] ?? [];
-
-        $factories = [];
-
-        foreach ($listAdapters as $name => $listAdapter) {
-            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_LIST_ADAPTER_KEY . '.' . $name;
-
-            $factories[$key] = BuildDelegator::class;
-        }
-
-        foreach ($resourceManagers as $name => $resourceManager) {
-            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_RESOURCE_MANAGER_KEY . '.' . $name;
-
-            $factories[$key] = BuildDelegator::class;
-        }
-
-        foreach ($lists as $name => $list) {
-            $key = self::CONFIG_ROOT_KEY . '.' . self::CONFIG_MODULE_KEY
-                . '.' . self::CONFIG_LIST_KEY . '.' . $name;
-
-            $factories[$key] = BuildDelegator::class;
-        }
-
-        $serviceManager->configure(
-            [
-                'factories' => $factories
-            ]
-        );
     }
 }
